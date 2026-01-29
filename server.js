@@ -46,7 +46,7 @@ app.post('/api/admin/generate-key', (req, res) => {
     const newKey = {
         key,
         expiresAt: expiresAt.toISOString(),
-        duration,
+        duration: parseInt(duration),
         usedBy: 'Unclaimed',
         createdAt: now.toISOString()
     };
@@ -55,6 +55,35 @@ app.post('/api/admin/generate-key', (req, res) => {
     saveDB();
     
     res.json({ success: true, key: newKey.key, keys: db.apiKeys });
+});
+
+app.post('/api/admin/expire-key', (req, res) => {
+    const { key } = req.body;
+    const keyIndex = db.apiKeys.findIndex(k => k.key === key);
+    if (keyIndex > -1) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        db.apiKeys[keyIndex].expiresAt = yesterday.toISOString();
+        saveDB();
+        res.json({ success: true });
+    } else {
+        res.status(404).json({ error: "Key not found" });
+    }
+});
+
+app.post('/api/admin/extend-key', (req, res) => {
+    const { key, duration } = req.body;
+    const keyIndex = db.apiKeys.findIndex(k => k.key === key);
+    if (keyIndex > -1) {
+        const now = new Date();
+        const expiresAt = new Date(now.getTime() + (duration * 24 * 60 * 60 * 1000));
+        db.apiKeys[keyIndex].expiresAt = expiresAt.toISOString();
+        db.apiKeys[keyIndex].duration = parseInt(duration);
+        saveDB();
+        res.json({ success: true });
+    } else {
+        res.status(404).json({ error: "Key not found" });
+    }
 });
 
 app.get('/api/admin/keys', (req, res) => res.json(db.apiKeys));
