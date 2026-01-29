@@ -4,42 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aethel Locker</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Ace Editor -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.7/ace.js"></script>
-    <!-- Marked.js for Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    colors: {
-                        glass: "rgba(255, 255, 255, 0.9)",
-                        glassBorder: "rgba(255, 255, 255, 0.4)",
-                    },
-                    animation: {
-                        'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                        'fade-in': 'fadeIn 0.3s ease-out',
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: { glass: "rgba(255, 255, 255, 0.9)", glassBorder: "rgba(255, 255, 255, 0.4)" },
+                    animation: { 'slide-up': 'slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)', 'fade-in': 'fadeIn 0.3s ease-out' },
                     keyframes: {
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0' },
-                            '100%': { opacity: '1' },
-                        }
+                        slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } }
                     }
                 }
             }
@@ -47,1079 +27,359 @@
     </script>
 
     <style>
-        body {
-            background-color: #ffffff;
-            background-image: 
-                linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(147, 51, 234, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: moveGrid 60s linear infinite;
-            min-height: 100vh;
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            overflow: hidden; 
-        }
-
-        @keyframes moveGrid {
-            0% { background-position: 0 0; }
-            100% { background-position: 40px 40px; }
-        }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 32px -4px rgba(31, 38, 135, 0.1);
-        }
-
-        .text-gradient {
-            background: linear-gradient(to right, #2563eb, #9333ea);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Smooth Transitions */
-        button, input, div {
-            transition-property: all;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 200ms;
-        }
-
-        /* Editor Styles */
-        #editor-container, #readonly-editor {
-            font-family: 'JetBrains Mono', monospace;
-            border-radius: 0.5rem;
-        }
-
-        /* Markdown Styles */
-        .markdown-body pre {
-            background: #1e1e1e;
-            color: #d4d4d4;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            position: relative;
-            overflow-x: auto;
-        }
-        .markdown-body code {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9em;
-        }
-        .markdown-body h1 { font-size: 2em; font-weight: 700; margin-bottom: 0.5em; }
-        .markdown-body h2 { font-size: 1.5em; font-weight: 600; margin-bottom: 0.5em; margin-top: 1em; }
-        .markdown-body p { margin-bottom: 1em; line-height: 1.6; }
-        .markdown-body ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
-        
-        .copy-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.3rem;
-            font-size: 0.75rem;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .markdown-body pre:hover .copy-btn {
-            opacity: 1;
-        }
-        .copy-btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
+        body { background-color: #ffffff; background-image: linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(147, 51, 234, 0.05) 1px, transparent 1px); background-size: 40px 40px; animation: moveGrid 60s linear infinite; min-height: 100vh; margin: 0; font-family: 'Inter', sans-serif; overflow: hidden; }
+        @keyframes moveGrid { 0% { background-position: 0 0; } 100% { background-position: 40px 40px; } }
+        .glass-panel { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px -4px rgba(31, 38, 135, 0.1); }
+        .text-gradient { background: linear-gradient(to right, #2563eb, #9333ea); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        button, input, div { transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1); }
+        #editor-container, #readonly-editor { font-family: 'JetBrains Mono', monospace; border-radius: 0.5rem; }
+        .markdown-body pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 0.5rem; position: relative; overflow-x: auto; }
+        .copy-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 0.25rem 0.5rem; border-radius: 0.3rem; font-size: 0.75rem; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+        .markdown-body pre:hover .copy-btn { opacity: 1; }
     </style>
 </head>
 <body class="flex items-center justify-center p-4 h-screen w-screen relative">
 
     <!-- LOGIN WRAPPER -->
     <div id="auth-wrapper" class="w-full max-w-md animate-slide-up z-50">
-        <!-- EMAIL LOGIN -->
+        <!-- EMAIL -->
         <div id="login-container" class="glass-panel p-8 rounded-2xl shadow-2xl relative bg-white/80">
-            <div class="mb-6 flex justify-center">
-                <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-2xl shadow-lg shadow-blue-500/20 transform hover:scale-110 transition-transform">
-                    <i data-lucide="lock" class="w-8 h-8 text-white"></i>
-                </div>
-            </div>
+            <div class="mb-6 flex justify-center"><div class="bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-2xl shadow-lg"><i data-lucide="lock" class="w-8 h-8 text-white"></i></div></div>
             <h1 class="text-3xl font-bold mb-2 text-gradient tracking-tight">Aethel Locker</h1>
-            <p class="text-gray-500 mb-6 text-sm">Please verify your identity to access the dashboard.</p>
-            
+            <p class="text-gray-500 mb-6 text-sm">Please verify your identity.</p>
             <form id="email-form" class="space-y-4" onsubmit="handleEmailSubmit(event)">
-                <div class="text-left group">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 ml-1 group-focus-within:text-blue-600 transition-colors">Email Address</label>
-                    <input type="email" id="email" required 
-                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none bg-white/50 transition-all shadow-sm"
-                        placeholder="name@example.com">
-                </div>
-                <button type="submit" 
-                    class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transform transition active:scale-95">
-                    Check Access
-                </button>
+                <div class="text-left"><label class="block text-xs font-semibold uppercase text-gray-500 mb-1 ml-1">Email</label><input type="email" id="email" required class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none" placeholder="name@example.com"></div>
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 rounded-xl hover:shadow-lg transform transition active:scale-95">Check Access</button>
             </form>
         </div>
 
         <!-- API KEY -->
         <div id="apikey-container" class="glass-panel p-8 rounded-2xl shadow-2xl bg-white/80 hidden relative">
-            <button onclick="backToEmail()" class="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600">
-                <i data-lucide="arrow-left" class="w-5 h-5"></i>
-            </button>
-            <div class="mb-6 flex justify-center">
-                <div class="bg-gray-100 p-4 rounded-2xl">
-                    <i data-lucide="key" class="w-8 h-8 text-gray-600"></i>
-                </div>
-            </div>
+            <button onclick="backToEmail()" class="absolute top-4 left-4 p-2 rounded-full hover:bg-gray-100 text-gray-400"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <div class="mb-6 flex justify-center"><div class="bg-gray-100 p-4 rounded-2xl"><i data-lucide="key" class="w-8 h-8 text-gray-600"></i></div></div>
             <h1 class="text-2xl font-bold mb-2 text-gray-800">API Gateway</h1>
-            <p class="text-gray-500 mb-6 text-sm">Enter your secure API key to continue.</p>
-            
+            <p class="text-gray-500 mb-6 text-sm">Enter your secure API key.</p>
             <form id="apikey-form" class="space-y-4" onsubmit="handleApiKeySubmit(event)">
-                <div class="text-left">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1 ml-1">API Key</label>
-                    <input type="password" id="apikey" required 
-                        class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-gray-500/10 focus:border-gray-500 outline-none bg-white/50 transition-all"
-                        placeholder="sk_live_...">
-                </div>
-                <button type="submit" 
-                    class="w-full bg-gray-900 text-white font-semibold py-3 rounded-xl hover:bg-black hover:shadow-xl transform transition active:scale-95">
-                    Authenticate
-                </button>
+                <div class="text-left"><label class="block text-xs font-semibold uppercase text-gray-500 mb-1 ml-1">API Key</label><input type="password" id="apikey" required class="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none" placeholder="sk_live_..."></div>
+                <button type="submit" class="w-full bg-gray-900 text-white font-semibold py-3 rounded-xl hover:bg-black transform transition active:scale-95">Authenticate</button>
             </form>
-            <p id="api-error" class="text-red-500 text-sm mt-4 hidden text-center bg-red-50 py-2 rounded-lg">Invalid or Expired API Key</p>
+            <p id="api-error" class="text-red-500 text-sm mt-4 hidden text-center bg-red-50 py-2 rounded-lg"></p>
         </div>
 
-        <!-- 2FA: EMAIL SENT SIMULATION -->
+        <!-- 2FA -->
         <div id="2fa-email-modal" class="glass-panel p-8 rounded-2xl shadow-2xl bg-white/80 hidden relative text-center">
-            <div class="mb-6 flex justify-center">
-                <div class="bg-blue-100 p-4 rounded-full animate-pulse">
-                    <i data-lucide="mail" class="w-8 h-8 text-blue-600"></i>
-                </div>
-            </div>
+            <div class="mb-6 flex justify-center"><div class="bg-blue-100 p-4 rounded-full animate-pulse"><i data-lucide="mail" class="w-8 h-8 text-blue-600"></i></div></div>
             <h2 class="text-xl font-bold text-gray-800">Verification Required</h2>
-            <p class="text-gray-500 mt-2 text-sm">We've sent a secure link to <br><span id="2fa-target-email" class="font-bold text-gray-700">email@example.com</span></p>
-            <p class="text-xs text-gray-400 mt-4 italic">Simulating email reception...</p>
-            
-            <button onclick="openPinEntry()" class="mt-6 w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition">
-                Verify Identity (Click Link)
-            </button>
+            <p class="text-gray-500 mt-2 text-sm">Secure link sent to <br><span id="2fa-target-email" class="font-bold text-gray-700"></span></p>
+            <button onclick="openPinEntry()" class="mt-6 w-full bg-blue-600 text-white font-semibold py-3 rounded-xl hover:bg-blue-700 transition">Verify Identity</button>
         </div>
 
-        <!-- 2FA: PIN ENTRY -->
         <div id="2fa-pin-modal" class="glass-panel p-8 rounded-2xl shadow-2xl bg-white/80 hidden relative text-center">
-            <div class="mb-4">
-                <i data-lucide="shield-check" class="w-8 h-8 text-green-600 mx-auto"></i>
-            </div>
+            <div class="mb-4"><i data-lucide="shield-check" class="w-8 h-8 text-green-600 mx-auto"></i></div>
             <h2 class="text-lg font-bold text-gray-800 mb-4">Enter PIN Code</h2>
-            <div class="flex justify-center gap-2 mb-6">
-                <input type="password" id="pin-input" maxlength="6" class="text-center text-2xl font-mono tracking-widest w-40 px-2 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none bg-transparent" placeholder="••••">
-            </div>
-            <button onclick="verifyPinAndLogin()" class="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition">
-                Confirm
-            </button>
+            <div class="flex justify-center gap-2 mb-6"><input type="password" id="pin-input" maxlength="6" class="text-center text-2xl font-mono tracking-widest w-40 px-2 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none bg-transparent" placeholder="••••"></div>
+            <button onclick="verifyPinAndLogin()" class="w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition">Confirm</button>
             <p id="pin-error" class="text-red-500 text-xs mt-3 hidden">Incorrect PIN</p>
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
+    <!-- DASHBOARD -->
     <div id="dashboard-container" class="hidden w-full h-[95vh] max-w-[1400px] glass-panel rounded-3xl overflow-hidden flex shadow-2xl animate-slide-up z-40">
-        
-        <!-- SIDEBAR -->
+        <!-- Sidebar -->
         <div class="w-72 bg-white/60 border-r border-gray-100 flex flex-col backdrop-blur-xl">
-            <div class="p-8 border-b border-gray-100/50 flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/20 text-lg">A</div>
-                <span class="font-bold text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600">Aethel Locker</span>
-            </div>
-
+            <div class="p-8 border-b border-gray-100/50 flex items-center gap-3"><div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">A</div><span class="font-bold text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600">Aethel Locker</span></div>
             <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                <button onclick="switchTab('projects')" id="tab-btn-projects" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left transition-all bg-blue-50/50 text-blue-700 font-medium shadow-sm border border-blue-100">
-                    <i data-lucide="layout-grid" class="w-5 h-5"></i>
-                    Projects
-                </button>
+                <button onclick="switchTab('projects')" id="tab-btn-projects" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left bg-blue-50/50 text-blue-700 font-medium border border-blue-100"><i data-lucide="layout-grid" class="w-5 h-5"></i> Projects</button>
                 <div id="admin-tabs" class="hidden space-y-2">
-                    <button onclick="switchTab('api')" id="tab-btn-api" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left text-gray-500 hover:bg-white/50 hover:text-gray-900 transition-all font-medium border border-transparent">
-                        <i data-lucide="key" class="w-5 h-5"></i>
-                        Admin API
-                    </button>
-                    <button onclick="switchTab('registration')" id="tab-btn-registration" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left text-gray-500 hover:bg-white/50 hover:text-gray-900 transition-all font-medium border border-transparent">
-                        <i data-lucide="users" class="w-5 h-5"></i>
-                        Registration
-                    </button>
+                    <button onclick="switchTab('api')" id="tab-btn-api" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left text-gray-500 hover:bg-white/50 border border-transparent"><i data-lucide="key" class="w-5 h-5"></i> Admin API</button>
+                    <button onclick="switchTab('registration')" id="tab-btn-registration" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left text-gray-500 hover:bg-white/50 border border-transparent"><i data-lucide="users" class="w-5 h-5"></i> Registration</button>
                 </div>
-                <button onclick="switchTab('global-settings')" id="tab-btn-settings" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left text-gray-500 hover:bg-white/50 hover:text-gray-900 transition-all font-medium border border-transparent">
-                    <i data-lucide="settings-2" class="w-5 h-5"></i>
-                    Settings
-                </button>
+                <button onclick="switchTab('global-settings')" id="tab-btn-settings" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-left text-gray-500 hover:bg-white/50 border border-transparent"><i data-lucide="settings-2" class="w-5 h-5"></i> Settings</button>
             </nav>
-
-            <div class="p-4 border-t border-gray-100">
-                <div class="flex items-center gap-3 px-3 py-3 bg-white/50 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow cursor-default">
-                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-100 to-blue-100 flex items-center justify-center text-purple-600 font-bold text-sm border border-white shadow-sm" id="user-avatar">
-                        <!-- Initials -->
-                    </div>
-                    <div class="flex-1 overflow-hidden">
-                        <p class="text-xs font-bold text-gray-800 truncate" id="display-name">user@email.com</p>
-                        <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-wider" id="access-level">User Access</p>
-                    </div>
-                </div>
-            </div>
+            <div class="p-4 border-t border-gray-100"><div class="flex items-center gap-3 px-3 py-3 bg-white/50 rounded-2xl border border-gray-100 shadow-sm"><div class="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-100 to-blue-100 flex items-center justify-center text-purple-600 font-bold text-sm border border-white shadow-sm" id="user-avatar"></div><div class="flex-1 overflow-hidden"><p class="text-xs font-bold text-gray-800 truncate" id="display-name"></p><p class="text-[10px] text-emerald-600 font-bold uppercase tracking-wider" id="access-level"></p></div></div></div>
         </div>
 
-        <!-- CONTENT AREA -->
+        <!-- Main -->
         <main class="flex-1 bg-white/40 overflow-hidden relative flex flex-col">
-            
-            <!-- VIEW: PROJECTS LIST -->
+            <!-- Projects -->
             <div id="view-projects" class="flex-1 overflow-y-auto p-10 animate-fade-in">
-                <header class="flex justify-between items-end mb-10">
-                    <div>
-                        <h2 class="text-3xl font-bold text-gray-800 tracking-tight">Projects</h2>
-                        <p class="text-gray-500 mt-1">Manage and collaborate on your active locker items.</p>
-                    </div>
-                    <button onclick="openCreateModal()" class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 transition shadow-lg shadow-gray-200 hover:shadow-xl active:scale-95 flex items-center gap-2 group">
-                        <i data-lucide="plus-circle" class="w-4 h-4 group-hover:rotate-90 transition-transform"></i> New Project
-                    </button>
-                </header>
-
-                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    <!-- Projects Injected Here -->
-                </div>
-                
-                <div id="empty-state" class="hidden flex-col items-center justify-center text-center p-20 border-2 border-dashed border-gray-200 rounded-3xl bg-white/20">
-                    <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6 shadow-inner">
-                        <i data-lucide="folder-plus" class="w-10 h-10 text-gray-300"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900">No projects yet</h3>
-                    <p class="text-gray-500 mt-2 mb-6 max-w-xs mx-auto">Your locker is empty. Create your first project to get started.</p>
-                    <button onclick="openCreateModal()" class="text-blue-600 font-bold hover:text-blue-700 hover:underline underline-offset-4">Create Project</button>
-                </div>
+                <header class="flex justify-between items-end mb-10"><div><h2 class="text-3xl font-bold text-gray-800">Projects</h2></div><button onclick="openCreateModal()" class="bg-gray-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-800 flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4"></i> New Project</button></header>
+                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+                <div id="empty-state" class="hidden flex-col items-center justify-center text-center p-20 border-2 border-dashed border-gray-200 rounded-3xl"><i data-lucide="folder-plus" class="w-10 h-10 text-gray-300 mb-4"></i><h3 class="text-xl font-bold text-gray-900">No projects yet</h3><button onclick="openCreateModal()" class="text-blue-600 font-bold mt-2 hover:underline">Create Project</button></div>
             </div>
 
-            <!-- VIEW: ADMIN API -->
+            <!-- Admin API -->
             <div id="view-admin-api" class="hidden flex-1 overflow-y-auto p-10 animate-fade-in">
-                <header class="mb-10">
-                    <h2 class="text-3xl font-bold text-gray-800 tracking-tight">API Management</h2>
-                    <p class="text-gray-500 mt-1">Generate and monitor host live keys.</p>
-                </header>
-
+                <header class="mb-10"><h2 class="text-3xl font-bold text-gray-800">API Management</h2></header>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Generator -->
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 h-fit">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <i data-lucide="zap" class="w-5 h-5 text-yellow-500"></i> Generate Key
-                        </h3>
+                        <h3 class="font-bold text-gray-800 mb-4">Generate Key</h3>
                         <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-600 mb-1">Duration (Days)</label>
-                                <input type="number" id="api-duration" value="30" min="1" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none">
-                            </div>
-                            <button onclick="generateApiKey()" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-200">
-                                Generate Host Live Key
-                            </button>
+                            <div><label class="block text-sm font-semibold text-gray-600 mb-1">Duration (Days)</label><input type="number" id="api-duration" value="30" class="w-full px-4 py-2 border rounded-xl"></div>
+                            <button onclick="generateApiKey()" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl hover:bg-blue-700">Generate Key</button>
                         </div>
-                        <div id="generated-key-display" class="hidden mt-6 p-4 bg-gray-50 rounded-xl border border-gray-200 break-all">
-                            <p class="text-xs text-gray-500 uppercase font-bold mb-1">New Key</p>
-                            <p class="font-mono text-sm text-blue-600 font-bold" id="new-key-text">sk_live_...</p>
-                        </div>
+                        <div id="generated-key-display" class="hidden mt-6 p-4 bg-gray-50 rounded-xl break-all"><p class="text-xs font-bold uppercase text-gray-500">New Key</p><p id="new-key-text" class="font-mono text-blue-600 font-bold"></p></div>
                     </div>
-
-                    <!-- Active Keys List -->
                     <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div class="p-6 border-b border-gray-100">
-                            <h3 class="text-lg font-bold text-gray-800">Active Keys Monitor</h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm">
-                                <thead class="bg-gray-50 text-gray-500 font-semibold border-b border-gray-100">
-                                    <tr>
-                                        <th class="px-6 py-4">Key Prefix</th>
-                                        <th class="px-6 py-4">User (Gmail)</th>
-                                        <th class="px-6 py-4">Expires In</th>
-                                        <th class="px-6 py-4">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="api-keys-list" class="divide-y divide-gray-100">
-                                    <!-- JS Injected -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <div id="no-keys-msg" class="p-8 text-center text-gray-400 hidden">
-                            No active keys found.
-                        </div>
+                        <div class="p-6 border-b border-gray-100"><h3 class="font-bold text-gray-800">Keys Monitor</h3></div>
+                        <table class="w-full text-left text-sm"><thead class="bg-gray-50 text-gray-500 font-semibold border-b"><tr><th class="px-6 py-4">Key</th><th class="px-6 py-4">User</th><th class="px-6 py-4">Expires</th><th class="px-6 py-4">Status</th></tr></thead><tbody id="api-keys-list" class="divide-y divide-gray-100"></tbody></table>
                     </div>
                 </div>
             </div>
 
-            <!-- VIEW: ADMIN REGISTRATION -->
+            <!-- Admin Registration -->
             <div id="view-admin-registration" class="hidden flex-1 overflow-y-auto p-10 animate-fade-in">
-                <header class="mb-10">
-                    <h2 class="text-3xl font-bold text-gray-800 tracking-tight">Registration</h2>
-                    <p class="text-gray-500 mt-1">View registered users and their associated credentials.</p>
-                </header>
+                <header class="mb-10"><h2 class="text-3xl font-bold text-gray-800">Registration</h2></header>
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-50 text-gray-500 font-semibold border-b border-gray-100">
-                                <tr>
-                                    <th class="px-6 py-4">User Email</th>
-                                    <th class="px-6 py-4">API Key Access</th>
-                                    <th class="px-6 py-4">Registered On</th>
-                                </tr>
-                            </thead>
-                            <tbody id="registration-list" class="divide-y divide-gray-100">
-                                <!-- JS Injected -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="no-reg-msg" class="p-8 text-center text-gray-400 hidden">
-                        No registered users found.
-                    </div>
+                    <table class="w-full text-left text-sm"><thead class="bg-gray-50 text-gray-500 font-semibold border-b"><tr><th class="px-6 py-4">Email</th><th class="px-6 py-4">Key Used</th><th class="px-6 py-4">Date</th></tr></thead><tbody id="registration-list" class="divide-y divide-gray-100"></tbody></table>
                 </div>
             </div>
 
-            <!-- VIEW: SINGLE PROJECT DETAIL -->
-            <div id="view-project-detail" class="hidden h-full flex flex-col animate-fade-in bg-white/30">
-                <!-- Header -->
-                <div class="bg-white/80 backdrop-blur-md border-b border-gray-200 px-8 py-4 flex-shrink-0 z-10">
-                    <button onclick="closeProjectView()" class="mb-4 text-xs font-bold text-gray-400 hover:text-blue-600 flex items-center gap-1 transition-colors group">
-                        <i data-lucide="arrow-left" class="w-3 h-3 group-hover:-translate-x-1 transition-transform"></i> Back to Projects
-                    </button>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 text-blue-600 flex items-center justify-center shadow-sm border border-blue-100">
-                                <i data-lucide="box" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h1 id="detail-project-name" class="text-xl font-bold text-gray-900">Project Name</h1>
-                                <div class="flex items-center gap-2 mt-0.5">
-                                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                    <span class="text-xs text-gray-500 font-medium">Active Environment</span>
-                                </div>
-                            </div>
+            <!-- Settings -->
+            <div id="view-settings" class="hidden p-10 animate-fade-in">
+                <header class="mb-8"><h2 class="text-3xl font-bold text-gray-800">Settings</h2></header>
+                <div class="space-y-6 max-w-2xl">
+                    <div class="bg-white rounded-2xl border border-gray-200 p-6">
+                        <h3 class="font-bold text-gray-800 mb-4">Profile</h3>
+                        <div class="space-y-4">
+                            <div><label class="block text-sm font-medium mb-1">Username</label><div class="flex gap-2"><input type="text" id="setting-username" class="px-4 py-2 border rounded-lg w-full"><button onclick="saveProfile()" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm">Update</button></div></div>
+                            <div class="flex justify-between items-center"><span>Anonymous Mode</span><input type="checkbox" id="setting-anon-toggle" onchange="toggleAnonymous()"></div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Tabs (Functional UI) -->
-                <div class="bg-white/50 border-b border-gray-200 px-8 flex-shrink-0">
-                    <div class="flex gap-8">
-                        <button onclick="switchProjectTab('code')" id="ptab-code" class="py-4 text-sm font-semibold border-b-2 border-orange-500 text-gray-900 flex items-center gap-2 transition-colors">
-                            <i data-lucide="code-2" class="w-4 h-4"></i> Code
-                        </button>
-                        <button onclick="switchProjectTab('settings')" id="ptab-settings" class="py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-800 transition-colors flex items-center gap-2">
-                            <i data-lucide="settings" class="w-4 h-4"></i> Settings
-                        </button>
-                        <!-- Placeholders -->
-                        <button class="py-4 text-sm font-medium border-b-2 border-transparent text-gray-400 cursor-not-allowed flex items-center gap-2">
-                            <i data-lucide="circle-dot" class="w-4 h-4"></i> Issues
-                        </button>
+                    <div class="bg-white rounded-2xl border border-gray-200 p-6">
+                        <h3 class="font-bold text-gray-800 mb-4">Security</h3>
+                        <div class="space-y-4">
+                            <div><label class="block text-sm font-medium mb-1">PIN Code</label><div class="flex gap-2"><input type="password" id="setting-pin" maxlength="6" class="px-4 py-2 border rounded-lg w-48"><button onclick="savePin()" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm">Save</button></div></div>
+                            <div class="flex justify-between items-center"><span>2FA Enabled</span><input type="checkbox" id="setting-2fa-toggle" onchange="toggle2FA()"></div>
+                        </div>
                     </div>
+                    <div class="bg-white rounded-2xl border border-gray-200 p-6 bg-red-50/50"><button onclick="logout()" class="text-red-600 font-bold flex items-center gap-2"><i data-lucide="log-out" class="w-4 h-4"></i> Sign Out</button></div>
                 </div>
+            </div>
 
-                <!-- Tab Content: Code -->
+            <!-- Project Detail -->
+            <div id="view-project-detail" class="hidden h-full flex flex-col animate-fade-in bg-white/30">
+                <div class="bg-white/80 backdrop-blur-md border-b border-gray-200 px-8 py-4 flex-shrink-0 z-10 flex justify-between items-center">
+                    <div class="flex items-center gap-4"><button onclick="closeProjectView()"><i data-lucide="arrow-left" class="w-4 h-4"></i></button><h1 id="detail-project-name" class="text-xl font-bold"></h1></div>
+                </div>
+                <div class="bg-white/50 border-b border-gray-200 px-8 flex gap-8">
+                    <button onclick="switchProjectTab('code')" id="ptab-code" class="py-4 text-sm font-semibold border-b-2 border-orange-500">Code</button>
+                    <button onclick="switchProjectTab('settings')" id="ptab-settings" class="py-4 text-sm font-medium border-b-2 border-transparent">Settings</button>
+                </div>
                 <div id="project-code-panel" class="flex-1 p-8 overflow-y-auto">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <!-- Toolbar -->
-                        <div class="bg-gray-50/80 px-4 py-3 flex justify-between items-center border-b border-gray-200">
-                            <div class="flex items-center gap-2">
-                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Repo" class="w-6 h-6 rounded-full border border-gray-300 bg-white">
-                                <span class="text-xs font-bold text-gray-700" id="commit-user">admin</span>
-                                <span class="text-xs text-gray-400">•</span>
-                                <span class="text-xs text-gray-500">Latest commit</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="openUploadModal()" class="text-xs font-semibold px-3 py-1.5 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-700 transition flex items-center gap-2 shadow-sm">
-                                    <i data-lucide="upload-cloud" class="w-3 h-3"></i> Upload
-                                </button>
-                                <button onclick="openAddFileView()" class="text-xs font-semibold px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2 shadow-sm shadow-green-200">
-                                    <i data-lucide="file-plus" class="w-3 h-3"></i> Add File
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- File List -->
-                        <div id="file-list-container" class="divide-y divide-gray-100">
-                            <!-- JS Injected -->
-                        </div>
+                        <div class="bg-gray-50/80 px-4 py-3 flex justify-between items-center border-b"><span>Files</span><div class="flex gap-2"><button onclick="openUploadModal()" class="text-xs bg-white border px-3 py-1.5 rounded-lg">Upload</button><button onclick="openAddFileView()" class="text-xs bg-green-600 text-white px-3 py-1.5 rounded-lg">Add File</button></div></div>
+                        <div id="file-list-container" class="divide-y divide-gray-100"></div>
                     </div>
                 </div>
-
-                <!-- Tab Content: Settings -->
-                <div id="project-settings-panel" class="hidden flex-1 p-8 overflow-y-auto">
-                    <div class="max-w-2xl mx-auto space-y-6">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                            <h3 class="text-lg font-bold text-gray-800 mb-4">General Settings</h3>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
-                                    <div class="flex gap-2">
-                                        <input type="text" id="setting-project-name" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                                        <button onclick="saveProjectName()" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition">Save</button>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-2">The project name is used for unique identification within your locker.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-xl shadow-sm border border-red-200 p-6">
-                            <h3 class="text-lg font-bold text-red-600 mb-4">Danger Zone</h3>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-bold text-gray-800">Delete this project</p>
-                                    <p class="text-xs text-gray-500">Once you delete a project, there is no going back.</p>
-                                </div>
-                                <button onclick="deleteProject()" class="bg-red-50 text-red-600 border border-red-200 px-4 py-2 rounded-lg text-sm font-bold hover:bg-red-100 transition">Delete Project</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="project-settings-panel" class="hidden flex-1 p-8 overflow-y-auto"><div class="bg-white rounded-xl border p-6"><label>Rename</label><div class="flex gap-2 mt-1"><input id="setting-project-name" class="border px-4 py-2 rounded-lg flex-1"><button onclick="saveProjectName()" class="bg-gray-900 text-white px-4 py-2 rounded-lg">Save</button></div></div><button onclick="deleteProject()" class="mt-4 bg-red-100 text-red-600 px-4 py-2 rounded-lg w-full">Delete Project</button></div>
             </div>
 
-            <!-- VIEW: EDITOR (Add/Edit File) -->
+            <!-- Editor & Viewer -->
             <div id="view-editor" class="hidden h-full flex flex-col animate-fade-in bg-white/50">
-                <div class="px-8 py-4 border-b border-gray-200 bg-white/80 flex items-center justify-between">
-                    <div class="flex items-center gap-4 flex-1">
-                        <button onclick="cancelEdit()" class="text-gray-400 hover:text-gray-600">
-                            <i data-lucide="x" class="w-5 h-5"></i>
-                        </button>
-                        <div class="flex-1 max-w-md">
-                            <div class="flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-1.5 border border-transparent focus-within:border-blue-500 focus-within:bg-white transition-all">
-                                <span class="text-gray-500 font-mono text-sm">/</span>
-                                <input type="text" id="editor-filename" class="bg-transparent border-none outline-none text-sm font-medium w-full text-gray-800 placeholder-gray-400 font-mono" placeholder="src/main.js">
-                            </div>
-                        </div>
-                    </div>
-                    <button onclick="commitFile()" class="bg-green-600 text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-green-700 shadow-lg shadow-green-200 transition flex items-center gap-2">
-                        <i data-lucide="check" class="w-4 h-4"></i> Commit Changes
-                    </button>
-                </div>
-                <div class="flex-1 p-4 relative bg-gray-900">
-                    <div id="editor-container" class="w-full h-full shadow-inner border border-gray-800"></div>
-                </div>
+                <div class="px-8 py-4 border-b bg-white/80 flex justify-between"><button onclick="cancelEdit()"><i data-lucide="x" class="w-5 h-5"></i></button><div class="flex gap-2 bg-gray-100 rounded-lg px-3 py-1"><input id="editor-filename" class="bg-transparent outline-none"></div><button onclick="commitFile()" class="bg-green-600 text-white px-6 py-2 rounded-lg">Commit</button></div>
+                <div class="flex-1 p-4 relative bg-gray-900"><div id="editor-container" class="w-full h-full"></div></div>
             </div>
-
-            <!-- VIEW: FILE VIEWER (Read Only / Markdown Preview) -->
             <div id="view-file-display" class="hidden h-full flex flex-col animate-fade-in bg-gray-50">
-                <div class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm z-10">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-blue-50 rounded-lg text-blue-600">
-                            <i data-lucide="file-text" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h2 id="display-filename" class="text-lg font-bold text-gray-800 font-mono">script.js</h2>
-                            <span id="display-filetype" class="text-xs text-gray-500 uppercase font-semibold">JavaScript</span>
-                        </div>
-                    </div>
-                    <div class="flex gap-2">
-                        <div id="md-toggle-container" class="hidden bg-gray-100 rounded-lg p-1 flex gap-1 mr-2">
-                             <button onclick="toggleMdView('preview')" id="btn-md-preview" class="px-3 py-1 text-xs font-bold rounded-md bg-white shadow-sm text-gray-800">Preview</button>
-                             <button onclick="toggleMdView('code')" id="btn-md-code" class="px-3 py-1 text-xs font-bold rounded-md text-gray-500 hover:text-gray-800">Code</button>
-                        </div>
-                        <button onclick="downloadCurrentFile()" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
-                            <i data-lucide="download" class="w-4 h-4"></i> Download
-                        </button>
-                        <button onclick="editCurrentFile()" class="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition shadow-sm flex items-center gap-2">
-                            <i data-lucide="pencil" class="w-4 h-4"></i> Edit
-                        </button>
-                        <button onclick="openRawView()" class="px-3 py-1.5 text-sm font-medium text-white bg-gray-900 border border-gray-900 rounded-lg hover:bg-gray-800 transition shadow-sm flex items-center gap-2">
-                            <i data-lucide="code" class="w-4 h-4"></i> Open Raw
-                        </button>
-                    </div>
-                </div>
-                <div class="flex-1 p-6 overflow-hidden bg-gray-900 relative">
-                    <div id="readonly-editor" class="w-full h-full rounded-lg shadow-sm border border-gray-700"></div>
-                    <!-- Markdown Preview Layer -->
-                    <div id="markdown-preview" class="hidden absolute inset-6 bg-white rounded-lg shadow-sm border border-gray-200 overflow-y-auto p-8 markdown-body text-gray-800"></div>
-                </div>
-            </div>
-
-            <!-- VIEW: GLOBAL SETTINGS -->
-            <div id="view-settings" class="hidden p-10 animate-fade-in">
-                <header class="mb-8">
-                    <h2 class="text-3xl font-bold text-gray-800">Settings</h2>
-                </header>
-                <div class="space-y-6 max-w-2xl">
-                    <!-- Profile Settings -->
-                    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-                        <div class="p-6 border-b border-gray-100">
-                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                <i data-lucide="user" class="w-5 h-5 text-purple-500"></i> Profile
-                            </h3>
-                            <p class="text-sm text-gray-500 mt-1">Manage your identity and visibility.</p>
-                        </div>
-                        <div class="p-6 space-y-6">
-                            <!-- Username -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Display Username</label>
-                                <div class="flex gap-2">
-                                    <input type="text" id="setting-username" placeholder="e.g. CodeMaster99" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none w-full">
-                                    <button onclick="saveProfile()" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-black transition whitespace-nowrap">Update</button>
-                                </div>
-                            </div>
-                            <!-- Anonymous Mode -->
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <span class="block text-sm font-medium text-gray-800">Anonymous Mode</span>
-                                    <span class="text-xs text-gray-500">Hide your email and use a generic avatar in the sidebar.</span>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="setting-anon-toggle" class="sr-only peer" onchange="toggleAnonymous()">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Account Protection -->
-                    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-                        <div class="p-6 border-b border-gray-100">
-                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-                                <i data-lucide="shield" class="w-5 h-5 text-blue-500"></i> Account Protection
-                            </h3>
-                            <p class="text-sm text-gray-500 mt-1">Secure your account with 2FA and Pin Codes.</p>
-                        </div>
-                        <div class="p-6 space-y-6">
-                            <!-- Pin Code -->
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Security PIN</label>
-                                <div class="flex gap-2">
-                                    <input type="password" id="setting-pin" maxlength="6" placeholder="Set 4-6 digit PIN" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none w-48">
-                                    <button onclick="savePin()" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-black transition">Save PIN</button>
-                                </div>
-                                <p class="text-xs text-gray-500 mt-1">Used for verification when logging in.</p>
-                            </div>
-                            <!-- 2FA Toggle -->
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <span class="block text-sm font-medium text-gray-800">Two-Factor Authentication (2FA)</span>
-                                    <span class="text-xs text-gray-500">Requires verification email link on login.</span>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="setting-2fa-toggle" class="sr-only peer" onchange="toggle2FA()">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sign Out -->
-                    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-                        <div class="p-6 bg-red-50/50">
-                            <button onclick="logout()" class="text-red-600 text-sm font-bold hover:text-red-700 transition flex items-center gap-2">
-                                <i data-lucide="log-out" class="w-4 h-4"></i> Sign Out
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <div class="bg-white border-b px-6 py-4 flex justify-between items-center"><div class="flex gap-3"><h2 id="display-filename" class="font-bold"></h2></div><div class="flex gap-2"><div id="md-toggle-container" class="hidden bg-gray-100 rounded p-1 flex gap-1"><button onclick="toggleMdView('preview')" id="btn-md-preview" class="px-2 text-xs rounded bg-white">Preview</button><button onclick="toggleMdView('code')" id="btn-md-code" class="px-2 text-xs text-gray-500">Code</button></div><button onclick="downloadCurrentFile()"><i data-lucide="download" class="w-4 h-4"></i></button><button onclick="editCurrentFile()"><i data-lucide="pencil" class="w-4 h-4"></i></button><button onclick="openRawView()"><i data-lucide="code" class="w-4 h-4"></i></button></div></div>
+                <div class="flex-1 p-6 overflow-hidden bg-gray-900 relative"><div id="readonly-editor" class="w-full h-full"></div><div id="markdown-preview" class="hidden absolute inset-6 bg-white overflow-y-auto p-8 markdown-body"></div></div>
             </div>
         </main>
     </div>
 
-    <!-- MODAL: CREATE PROJECT -->
-    <div id="modal-create-project" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 transform scale-100 transition-all">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold text-gray-800">Create a new project</h3>
-                <button onclick="closeCreateModal()" class="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-            <form onsubmit="handleCreateProject(event)">
-                <div class="mb-4">
-                    <label class="block text-sm font-bold text-gray-700 mb-1">Project Name</label>
-                    <input type="text" id="new-project-name" required 
-                        class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none transition-all"
-                        placeholder="my-awesome-project">
-                </div>
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" onclick="closeCreateModal()" class="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-xl transition">Cancel</button>
-                    <button type="submit" class="px-6 py-2 text-sm font-bold text-white bg-green-600 hover:bg-green-700 rounded-xl shadow-lg shadow-green-200 transition transform active:scale-95">Create Project</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL: UPLOAD FILE -->
-    <div id="modal-upload-file" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-fade-in">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold text-gray-800">Upload File</h3>
-                <button onclick="closeUploadModal()" class="p-1 rounded-full hover:bg-gray-100 transition">
-                    <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
-                </button>
-            </div>
-            <div class="space-y-4">
-                <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition cursor-pointer relative" onclick="document.getElementById('file-input').click()">
-                    <input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event)">
-                    <i data-lucide="upload-cloud" class="w-10 h-10 text-blue-500 mx-auto mb-2"></i>
-                    <p class="text-sm font-medium text-gray-600">Click to select a file</p>
-                    <p class="text-xs text-gray-400 mt-1">Supports .txt, .js, .html, .css, .lua, etc.</p>
-                </div>
-                <div id="upload-preview" class="hidden bg-blue-50 p-4 rounded-xl border border-blue-100">
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="file-code" class="w-5 h-5 text-blue-600"></i>
-                        <div class="flex-1 overflow-hidden">
-                            <p id="upload-filename" class="text-sm font-bold text-gray-800 truncate">example.txt</p>
-                            <p id="upload-filetype" class="text-xs text-blue-600">Text File</p>
-                        </div>
-                    </div>
-                </div>
-                <button onclick="confirmUpload()" id="btn-confirm-upload" disabled class="w-full py-3 rounded-xl font-bold text-white bg-gray-300 cursor-not-allowed transition-all">
-                    Upload & Edit
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Modals -->
+    <div id="modal-create-project" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50"><div class="bg-white rounded-xl p-6 w-full max-w-md"><h3 class="font-bold mb-4">New Project</h3><input id="new-project-name" class="w-full border px-4 py-2 rounded-lg mb-4" placeholder="Name"><div class="flex justify-end gap-2"><button onclick="closeCreateModal()">Cancel</button><button onclick="handleCreateProject(event)" class="bg-green-600 text-white px-4 py-2 rounded-lg">Create</button></div></div></div>
+    <div id="modal-upload-file" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50"><div class="bg-white rounded-xl p-6 w-full max-w-md"><h3 class="font-bold mb-4">Upload</h3><div onclick="document.getElementById('file-input').click()" class="border-2 border-dashed p-8 text-center cursor-pointer"><input type="file" id="file-input" class="hidden" onchange="handleFileSelect(event)"><p>Select File</p></div><div id="upload-preview" class="hidden mt-4 p-2 bg-blue-50 text-sm"><span id="upload-filename"></span></div><button onclick="confirmUpload()" id="btn-confirm-upload" disabled class="w-full mt-4 bg-gray-300 text-white px-4 py-2 rounded-lg">Upload</button><button onclick="closeUploadModal()" class="w-full mt-2 text-gray-500">Cancel</button></div></div>
 
     <script>
-        // --- CONFIG & STATE ---
         const ALLOWED_EMAILS = ["bluerblx160@gmail.com", "zian.mabry@portsk12.com"];
-        const STORAGE_KEYS = { 
-            USER: 'aethel_user_data_v2', 
-            PROJECTS: 'aethel_projects_data_v2',
-            API_KEYS: 'aethel_api_keys_v1',
-            USER_SETTINGS: 'aethel_user_settings_v1'
+        let currentUser = null, projects = [], apiKeys = [], userSettings = {}, activeProjectId = null, activeFileIndex = -1, editingFileIndex = -1, pendingUploadContent = null, aceEditor, readOnlyEditor;
+        let pendingAuthEmail = ""; // Fix for refresh issue
+
+        window.onload = async () => {
+            initEditors(); lucide.createIcons();
+            const savedUser = localStorage.getItem('aethel_session_user');
+            
+            // Restore pending auth if page refreshed during flow
+            pendingAuthEmail = sessionStorage.getItem('pendingAuthEmail') || "";
+            if(pendingAuthEmail && !savedUser) {
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('apikey-container').classList.remove('hidden');
+            }
+
+            if(savedUser) { 
+                const u = JSON.parse(savedUser);
+                await fetchUserData(u.email);
+                currentUser = u;
+                if(u.authType === 'admin') await fetchAdminData();
+                completeLogin(u.role);
+            }
         };
 
-        let currentUser = null; 
-        let projects = []; 
-        let apiKeys = [];
-        let userSettings = {}; // { email: { pin: "1234", twoFactor: true, isAnonymous: false, username: "User" } }
-        let aceEditor = null;
-        let readOnlyEditor = null;
-        let activeProjectId = null;
-        let editingFileIndex = -1;
-        let pendingUploadContent = null;
-        let activeFileIndex = -1;
-        
-        // Temp auth state
-        let pendingAuthUser = null; 
-
-        // --- INITIALIZATION ---
-        window.addEventListener('load', () => {
-            loadData();
-            initEditors();
-            lucide.createIcons();
-            
-            // Re-login check
-            const savedUser = localStorage.getItem(STORAGE_KEYS.USER);
-            if (savedUser) {
-                try {
-                    const u = JSON.parse(savedUser);
-                    if(u && u.email) {
-                        // Check if key is still valid if logged in via key
-                        if (u.authType === 'key') {
-                            const keyData = apiKeys.find(k => k.key === u.key);
-                            if (!keyData || new Date(keyData.expiresAt) < new Date()) {
-                                logout(true); // Expired
-                                return;
-                            }
-                        }
-                        currentUser = u;
-                        completeLogin(u.role);
-                    }
-                } catch(e) { console.error(e); }
-            }
-        });
-
         function initEditors() {
-            // Edit Mode Editor
-            aceEditor = ace.edit("editor-container");
-            aceEditor.setTheme("ace/theme/monokai"); 
-            aceEditor.session.setMode("ace/mode/javascript");
-            aceEditor.setFontSize(14);
-            aceEditor.setShowPrintMargin(false);
-            aceEditor.session.setUseWrapMode(true); 
-
-            // Read Only Editor
-            readOnlyEditor = ace.edit("readonly-editor");
-            readOnlyEditor.setTheme("ace/theme/monokai"); 
-            readOnlyEditor.session.setMode("ace/mode/javascript");
-            readOnlyEditor.setReadOnly(true);
-            readOnlyEditor.setFontSize(14);
-            readOnlyEditor.renderer.setShowGutter(true);
-            readOnlyEditor.setShowPrintMargin(false);
+            aceEditor = ace.edit("editor-container"); aceEditor.setTheme("ace/theme/monokai"); aceEditor.session.setMode("ace/mode/javascript");
+            readOnlyEditor = ace.edit("readonly-editor"); readOnlyEditor.setTheme("ace/theme/monokai"); readOnlyEditor.session.setMode("ace/mode/javascript"); readOnlyEditor.setReadOnly(true);
         }
 
-        function loadData() {
-            // Projects
-            const savedProj = localStorage.getItem(STORAGE_KEYS.PROJECTS);
-            if(savedProj) {
-                try { projects = JSON.parse(savedProj); } catch(e) { projects = []; }
-            }
-            // API Keys
-            const savedKeys = localStorage.getItem(STORAGE_KEYS.API_KEYS);
-            if(savedKeys) {
-                try { apiKeys = JSON.parse(savedKeys); } catch(e) { apiKeys = []; }
-            }
-            // User Settings (PIN/2FA)
-            const savedSettings = localStorage.getItem(STORAGE_KEYS.USER_SETTINGS);
-            if(savedSettings) {
-                try { userSettings = JSON.parse(savedSettings); } catch(e) { userSettings = {}; }
-            }
+        async function fetchUserData(email) {
+            try {
+                const res = await fetch(`/api/user/data?email=${email}`);
+                const data = await res.json();
+                projects = data.projects || [];
+                userSettings = { [email]: data.settings || {} };
+            } catch(e) { console.error(e); }
         }
 
-        function saveData() { localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects)); }
-        function saveKeys() { localStorage.setItem(STORAGE_KEYS.API_KEYS, JSON.stringify(apiKeys)); }
-        function saveSettings() { localStorage.setItem(STORAGE_KEYS.USER_SETTINGS, JSON.stringify(userSettings)); }
+        async function syncUserData() {
+            if(!currentUser) return;
+            await fetch('/api/user/data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentUser.email, projects: projects, settings: userSettings[currentUser.email] }) });
+        }
 
-        // --- AUTH ---
-        function handleEmailSubmit(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value.toLowerCase().trim();
+        async function fetchAdminData() {
+            const kRes = await fetch('/api/admin/keys'); apiKeys = await kRes.json();
+            const rRes = await fetch('/api/admin/registrations'); const regs = await rRes.json();
+            renderRegistrationList(regs);
+        }
+
+        async function handleEmailSubmit(e) {
+            e.preventDefault(); const email = document.getElementById('email').value.trim().toLowerCase();
             if(ALLOWED_EMAILS.includes(email)) {
-                // Admin Login
-                attemptLogin(email, "Admin Access", 'admin');
+                currentUser = { email, role: "Admin Access", authType: 'admin' };
+                await fetchUserData(email); await fetchAdminData(); attemptLogin(email, "Admin Access", 'admin');
             } else {
-                // Normal User -> Key Required
-                pendingAuthUser = { email, role: 'Pending' }; // temp store
-                document.getElementById('login-container').classList.add('hidden');
+                pendingAuthEmail = email; 
+                sessionStorage.setItem('pendingAuthEmail', email); // Save state
+                document.getElementById('login-container').classList.add('hidden'); 
                 document.getElementById('apikey-container').classList.remove('hidden');
             }
         }
 
-        function handleApiKeySubmit(e) {
-            e.preventDefault();
-            const key = document.getElementById('apikey').value.trim();
-            const keyData = apiKeys.find(k => k.key === key);
+        async function handleApiKeySubmit(e) {
+            e.preventDefault(); const key = document.getElementById('apikey').value.trim();
+            if (!pendingAuthEmail) return alert("Please enter email first");
             
-            if (keyData) {
-                const now = new Date();
-                if (now > new Date(keyData.expiresAt)) {
-                    showApiError("This API Key has expired.");
-                    return;
-                }
-                
-                // Track Usage
-                if(keyData.usedBy === 'Unclaimed') {
-                    keyData.usedBy = pendingAuthUser.email;
-                    keyData.usedDate = now.toISOString();
-                    saveKeys();
-                } else if (keyData.usedBy !== pendingAuthUser.email) {
-                    keyData.usedBy = pendingAuthUser.email;
-                    saveKeys();
-                }
-
-                attemptLogin(pendingAuthUser.email, "Developer Access", 'key', key);
+            const res = await fetch('/api/auth/key-login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ key, email: pendingAuthEmail }) });
+            const data = await res.json();
+            if(data.success) {
+                currentUser = { email: pendingAuthEmail, role: data.role, authType: 'key' };
+                await fetchUserData(currentUser.email);
+                attemptLogin(currentUser.email, data.role, 'key');
             } else {
-                showApiError("Invalid API Key.");
+                document.getElementById('api-error').innerText = data.error; document.getElementById('api-error').classList.remove('hidden');
             }
         }
 
-        function showApiError(msg) {
-            const el = document.getElementById('api-error');
-            el.innerText = msg;
-            el.classList.remove('hidden');
+        function attemptLogin(email, role, authType) {
+            const s = userSettings[email] || {};
+            if(s.twoFactor) { trigger2FAFlow(email); } else { finalizeLogin(); }
         }
 
-        function attemptLogin(email, role, authType, key = null) {
-            // Check Security Settings
-            const settings = userSettings[email];
-            if (settings && settings.twoFactor) {
-                // 2FA Flow
-                pendingAuthUser = { email, role, authType, key }; // Store pending state
-                trigger2FAFlow(email);
-            } else {
-                // Direct Login
-                finalizeLogin({ email, role, authType, key });
-            }
-        }
-
-        function finalizeLogin(userObj) {
-            currentUser = userObj;
-            localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(currentUser));
+        function finalizeLogin() {
+            localStorage.setItem('aethel_session_user', JSON.stringify(currentUser));
+            sessionStorage.removeItem('pendingAuthEmail');
             completeLogin(currentUser.role);
         }
 
-        function backToEmail() {
-            document.getElementById('apikey-container').classList.add('hidden');
-            document.getElementById('login-container').classList.remove('hidden');
-        }
-
-        // --- 2FA FLOW ---
         function trigger2FAFlow(email) {
-            document.getElementById('login-container').classList.add('hidden');
-            document.getElementById('apikey-container').classList.add('hidden');
-            document.getElementById('2fa-email-modal').classList.remove('hidden');
-            document.getElementById('2fa-target-email').innerText = email;
+            document.getElementById('login-container').classList.add('hidden'); document.getElementById('apikey-container').classList.add('hidden');
+            document.getElementById('2fa-email-modal').classList.remove('hidden'); document.getElementById('2fa-target-email').innerText = email;
         }
-
-        function openPinEntry() {
-            document.getElementById('2fa-email-modal').classList.add('hidden');
-            document.getElementById('2fa-pin-modal').classList.remove('hidden');
-            document.getElementById('pin-input').focus();
-        }
-
+        function openPinEntry() { document.getElementById('2fa-email-modal').classList.add('hidden'); document.getElementById('2fa-pin-modal').classList.remove('hidden'); }
         function verifyPinAndLogin() {
-            const pin = document.getElementById('pin-input').value;
-            const settings = userSettings[pendingAuthUser.email];
-            
-            if (settings && settings.pin === pin) {
-                document.getElementById('2fa-pin-modal').classList.add('hidden');
-                finalizeLogin(pendingAuthUser);
-            } else {
-                document.getElementById('pin-error').classList.remove('hidden');
-            }
+            if(document.getElementById('pin-input').value === userSettings[currentUser.email].pin) { document.getElementById('2fa-pin-modal').classList.add('hidden'); finalizeLogin(); }
+            else document.getElementById('pin-error').classList.remove('hidden');
         }
 
         function completeLogin(role) {
-            document.getElementById('auth-wrapper').classList.add('hidden');
-            document.getElementById('dashboard-container').classList.remove('hidden');
-            
-            // Apply User Profile Settings
-            const settings = userSettings[currentUser.email] || {};
-            const displayNameEl = document.getElementById('display-name');
-            const avatarEl = document.getElementById('user-avatar');
-            
-            if (settings.isAnonymous) {
-                displayNameEl.innerText = "Anonymous User";
-                avatarEl.innerText = "?";
-                avatarEl.classList.replace('from-purple-100', 'from-gray-100');
-                avatarEl.classList.replace('to-blue-100', 'to-gray-200');
+            document.getElementById('auth-wrapper').classList.add('hidden'); document.getElementById('dashboard-container').classList.remove('hidden');
+            const s = userSettings[currentUser.email] || {};
+            if(s.isAnonymous) {
+                document.getElementById('display-name').innerText = "Anonymous"; document.getElementById('user-avatar').innerText = "?";
             } else {
-                // Use Custom Username if available, else email
-                displayNameEl.innerText = settings.username || currentUser.email;
-                avatarEl.innerText = currentUser.email.charAt(0).toUpperCase();
-                avatarEl.classList.replace('from-gray-100', 'from-purple-100');
-                avatarEl.classList.replace('to-gray-200', 'to-blue-100');
+                document.getElementById('display-name').innerText = s.username || currentUser.email; document.getElementById('user-avatar').innerText = currentUser.email[0].toUpperCase();
             }
-            
             document.getElementById('access-level').innerText = role;
-            document.getElementById('commit-user').innerText = settings.username || currentUser.email.split('@')[0];
-
-            // Init Settings UI
-            document.getElementById('setting-pin').value = settings.pin || '';
-            document.getElementById('setting-2fa-toggle').checked = settings.twoFactor || false;
-            document.getElementById('setting-username').value = settings.username || '';
-            document.getElementById('setting-anon-toggle').checked = settings.isAnonymous || false;
-
-            // Show Admin Tabs
-            if(role === "Admin Access") {
-                document.getElementById('admin-tabs').classList.remove('hidden');
-            }
-
+            document.getElementById('setting-pin').value = s.pin || '';
+            document.getElementById('setting-2fa-toggle').checked = s.twoFactor || false;
+            document.getElementById('setting-username').value = s.username || '';
+            document.getElementById('setting-anon-toggle').checked = s.isAnonymous || false;
+            if(role === 'Admin Access') document.getElementById('admin-tabs').classList.remove('hidden');
             renderProjects();
         }
 
-        function logout(expired = false) {
-            localStorage.removeItem(STORAGE_KEYS.USER);
-            if(expired) alert("Your session has expired.");
-            location.reload();
-        }
+        function logout() { localStorage.removeItem('aethel_session_user'); location.reload(); }
+        function backToEmail() { document.getElementById('apikey-container').classList.add('hidden'); document.getElementById('login-container').classList.remove('hidden'); }
 
-        // --- ADMIN FEATURES ---
-        function generateApiKey() {
-            const days = parseInt(document.getElementById('api-duration').value) || 30;
-            const prefix = "sk_live_";
-            const randomPart = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-            const key = prefix + randomPart;
-            const now = new Date();
-            const expiresAt = new Date(now.getTime() + (days * 24 * 60 * 60 * 1000));
-            
-            apiKeys.push({
-                key: key,
-                expiresAt: expiresAt.toISOString(),
-                duration: days,
-                usedBy: 'Unclaimed',
-                createdAt: now.toISOString()
-            });
-            saveKeys();
-            document.getElementById('new-key-text').innerText = key;
-            document.getElementById('generated-key-display').classList.remove('hidden');
-            renderApiKeys();
+        async function generateApiKey() {
+            const res = await fetch('/api/admin/generate-key', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ duration: document.getElementById('api-duration').value }) });
+            const data = await res.json();
+            apiKeys = data.keys; document.getElementById('new-key-text').innerText = data.key; document.getElementById('generated-key-display').classList.remove('hidden'); renderApiKeys();
         }
-
         function renderApiKeys() {
-            const tbody = document.getElementById('api-keys-list');
-            tbody.innerHTML = '';
-            apiKeys.length === 0 ? document.getElementById('no-keys-msg').classList.remove('hidden') : document.getElementById('no-keys-msg').classList.add('hidden');
-            
-            apiKeys.forEach(k => {
-                const isExpired = new Date() > new Date(k.expiresAt);
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50 transition";
-                tr.innerHTML = `<td class="px-6 py-4 font-mono text-gray-600">${k.key.substring(0, 15)}...</td><td class="px-6 py-4 font-medium text-gray-800">${k.usedBy}</td><td class="px-6 py-4 text-gray-500">${new Date(k.expiresAt).toLocaleDateString()}</td><td class="px-6 py-4"><span class="px-2 py-1 rounded-full text-xs font-bold ${isExpired?'bg-red-100 text-red-600':'bg-green-100 text-green-600'}">${isExpired?'Inactive':'Active'}</span></td>`;
-                tbody.appendChild(tr);
-            });
+            const t = document.getElementById('api-keys-list'); t.innerHTML = '';
+            apiKeys.forEach(k => { t.innerHTML += `<tr class="hover:bg-gray-50"><td class="px-6 py-4 font-mono">${k.key.substring(0,10)}...</td><td class="px-6 py-4">${k.usedBy}</td><td class="px-6 py-4">${new Date(k.expiresAt).toLocaleDateString()}</td><td class="px-6 py-4">Active</td></tr>`; });
+        }
+        function renderRegistrationList(regs) {
+            const t = document.getElementById('registration-list'); t.innerHTML = '';
+            regs.forEach(r => { t.innerHTML += `<tr class="hover:bg-gray-50"><td class="px-6 py-4">${r.email}</td><td class="px-6 py-4 font-mono text-xs">${r.key}</td><td class="px-6 py-4">${new Date(r.usedDate).toLocaleDateString()}</td></tr>`; });
         }
 
-        function renderRegistrationList() {
-            const tbody = document.getElementById('registration-list');
-            tbody.innerHTML = '';
-            // Filter keys that are claimed
-            const claimedKeys = apiKeys.filter(k => k.usedBy !== 'Unclaimed');
-            
-            if(claimedKeys.length === 0) {
-                document.getElementById('no-reg-msg').classList.remove('hidden');
-            } else {
-                document.getElementById('no-reg-msg').classList.add('hidden');
-                claimedKeys.forEach(k => {
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-gray-50";
-                    tr.innerHTML = `<td class="px-6 py-4 font-bold text-gray-800">${k.usedBy}</td><td class="px-6 py-4 font-mono text-xs text-gray-500">${k.key}</td><td class="px-6 py-4 text-gray-500">${k.usedDate ? new Date(k.usedDate).toLocaleDateString() : 'N/A'}</td>`;
-                    tbody.appendChild(tr);
-                });
-            }
+        function saveProfile() { userSettings[currentUser.email] = userSettings[currentUser.email] || {}; userSettings[currentUser.email].username = document.getElementById('setting-username').value; syncUserData().then(() => { completeLogin(currentUser.role); alert('Profile updated'); }); }
+        function toggleAnonymous() { userSettings[currentUser.email] = userSettings[currentUser.email] || {}; userSettings[currentUser.email].isAnonymous = document.getElementById('setting-anon-toggle').checked; syncUserData().then(() => completeLogin(currentUser.role)); }
+        function savePin() { userSettings[currentUser.email] = userSettings[currentUser.email] || {}; userSettings[currentUser.email].pin = document.getElementById('setting-pin').value; syncUserData().then(() => alert('PIN Saved')); }
+        function toggle2FA() { userSettings[currentUser.email] = userSettings[currentUser.email] || {}; userSettings[currentUser.email].twoFactor = document.getElementById('setting-2fa-toggle').checked; syncUserData(); }
+
+        function switchTab(t) {
+            ['view-projects','view-admin-api','view-admin-registration','view-settings','view-project-detail','view-editor','view-file-display'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            if(t === 'projects') document.getElementById('view-projects').classList.remove('hidden');
+            if(t === 'api') { document.getElementById('view-admin-api').classList.remove('hidden'); renderApiKeys(); }
+            if(t === 'registration') document.getElementById('view-admin-registration').classList.remove('hidden');
+            if(t === 'global-settings') document.getElementById('view-settings').classList.remove('hidden');
         }
-
-        // --- SETTINGS LOGIC ---
-        function savePin() {
-            const pin = document.getElementById('setting-pin').value;
-            if(pin.length < 4) return alert("PIN must be at least 4 digits");
-            
-            if(!userSettings[currentUser.email]) userSettings[currentUser.email] = {};
-            userSettings[currentUser.email].pin = pin;
-            saveSettings();
-            alert("PIN saved successfully.");
+        function openCreateModal(){document.getElementById('modal-create-project').classList.remove('hidden');}
+        function closeCreateModal(){document.getElementById('modal-create-project').classList.add('hidden');}
+        function handleCreateProject(e){ e.preventDefault(); projects.push({id:Date.now(), name:document.getElementById('new-project-name').value, lastUpdated: new Date().toLocaleDateString(), files:[]}); syncUserData(); closeCreateModal(); renderProjects(); }
+        function renderProjects(){ 
+            const g = document.getElementById('projects-grid'); g.innerHTML = '';
+            if(projects.length===0) { document.getElementById('empty-state').classList.remove('hidden'); document.getElementById('empty-state').classList.add('flex'); }
+            else { document.getElementById('empty-state').classList.add('hidden'); document.getElementById('empty-state').classList.remove('flex');
+            projects.forEach(p => { g.innerHTML += `<div onclick="openProjectDetail(${p.id})" class="bg-white p-6 rounded-2xl shadow-sm border cursor-pointer hover:shadow-lg transition"><h3 class="font-bold">${p.name}</h3><p class="text-sm text-gray-500">${p.files.length} files</p></div>`; }); }
         }
-
-        function toggle2FA() {
-            const enabled = document.getElementById('setting-2fa-toggle').checked;
-            
-            if(!userSettings[currentUser.email] || !userSettings[currentUser.email].pin) {
-                document.getElementById('setting-2fa-toggle').checked = false;
-                return alert("Please set a Security PIN before enabling 2FA.");
-            }
-            userSettings[currentUser.email].twoFactor = enabled;
-            saveSettings();
-        }
-
-        function saveProfile() {
-            const newName = document.getElementById('setting-username').value.trim();
-            if(!userSettings[currentUser.email]) userSettings[currentUser.email] = {};
-            userSettings[currentUser.email].username = newName;
-            saveSettings();
-            
-            // Refresh UI
-            completeLogin(currentUser.role);
-            alert("Username updated.");
-        }
-
-        function toggleAnonymous() {
-            const isAnon = document.getElementById('setting-anon-toggle').checked;
-            if(!userSettings[currentUser.email]) userSettings[currentUser.email] = {};
-            userSettings[currentUser.email].isAnonymous = isAnon;
-            saveSettings();
-            
-            // Refresh UI
-            completeLogin(currentUser.role);
-        }
-
-        // --- NAVIGATION ---
-        function switchTab(tab) {
-            const views = ['view-projects', 'view-project-detail', 'view-editor', 'view-file-display', 'view-settings', 'view-admin-api', 'view-admin-registration'];
-            views.forEach(v => document.getElementById(v).classList.add('hidden'));
-
-            ['projects', 'settings', 'api', 'registration'].forEach(t => {
-                const btn = document.getElementById(`tab-btn-${t}`);
-                if(btn) btn.classList.remove('bg-blue-50/50', 'text-blue-700', 'border-blue-100');
-            });
-
-            const targetBtnId = tab === 'global-settings' ? 'settings' : tab;
-            const activeBtn = document.getElementById(`tab-btn-${targetBtnId}`);
-            if(activeBtn) activeBtn.classList.add('bg-blue-50/50', 'text-blue-700', 'border-blue-100');
-
-            if(tab === 'projects') {
-                document.getElementById('view-projects').classList.remove('hidden');
-                renderProjects();
-            } else if (tab === 'global-settings') {
-                document.getElementById('view-settings').classList.remove('hidden');
-            } else if (tab === 'api') {
-                document.getElementById('view-admin-api').classList.remove('hidden');
-                renderApiKeys();
-            } else if (tab === 'registration') {
-                document.getElementById('view-admin-registration').classList.remove('hidden');
-                renderRegistrationList();
-            }
-        }
-
-        // --- PROJECTS ---
-        function openCreateModal() { document.getElementById('modal-create-project').classList.remove('hidden'); }
-        function closeCreateModal() { document.getElementById('modal-create-project').classList.add('hidden'); }
-        function handleCreateProject(e) {
-            e.preventDefault();
-            const name = document.getElementById('new-project-name').value.trim();
-            if(!name) return;
-            const newProj = { id: Date.now(), name: name, lastUpdated: new Date().toLocaleDateString(), files: [{ name: 'README.md', type: 'Markdown', content: `# ${name}\n\nWelcome.\n`, date: 'Just now' }] };
-            projects.push(newProj); saveData(); closeCreateModal(); renderProjects();
-        }
-        function renderProjects() {
-            const grid = document.getElementById('projects-grid');
-            const empty = document.getElementById('empty-state');
-            grid.innerHTML = '';
-            if(projects.length === 0) { empty.classList.remove('hidden'); empty.classList.add('flex'); } 
-            else { empty.classList.add('hidden'); empty.classList.remove('flex');
-                projects.forEach(p => {
-                    const card = document.createElement('div');
-                    card.className = "bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group relative overflow-hidden";
-                    card.onclick = () => openProjectDetail(p.id);
-                    const gradId = p.id % 3; const grads = ["from-blue-500 to-cyan-400", "from-purple-500 to-pink-400", "from-orange-400 to-red-400"];
-                    card.innerHTML = `<div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${grads[gradId]}"></div><div class="flex items-center justify-between mb-4"><div class="p-3 bg-gray-50 rounded-xl group-hover:bg-blue-50 transition-colors text-gray-400 group-hover:text-blue-500"><i data-lucide="folder-git-2" class="w-6 h-6"></i></div><span class="text-xs text-gray-400 font-mono">${p.lastUpdated}</span></div><h3 class="font-bold text-gray-800 text-lg mb-1 group-hover:text-blue-600 transition-colors">${p.name}</h3><p class="text-sm text-gray-500">${p.files.length} files stored</p>`;
-                    grid.prepend(card);
-                });
-            } lucide.createIcons();
-        }
-
-        // --- PROJECT DETAIL ---
-        function openProjectDetail(id) {
-            const p = projects.find(x => x.id === id);
-            if(!p) return;
-            activeProjectId = id;
-            document.getElementById('detail-project-name').innerText = p.name;
-            renderFiles(p); switchProjectTab('code');
-            document.getElementById('view-projects').classList.add('hidden'); document.getElementById('view-project-detail').classList.remove('hidden');
-        }
-        function closeProjectView() { switchTab('projects'); }
-        function switchProjectTab(tab) {
+        function openProjectDetail(id){ activeProjectId = id; const p = projects.find(x=>x.id===id); document.getElementById('detail-project-name').innerText=p.name; renderFiles(); switchTab('none'); document.getElementById('view-project-detail').classList.remove('hidden'); switchProjectTab('code'); }
+        function closeProjectView(){ switchTab('projects'); }
+        function switchProjectTab(t){ 
             document.getElementById('project-code-panel').classList.add('hidden'); document.getElementById('project-settings-panel').classList.add('hidden');
-            document.getElementById('ptab-code').classList.replace('border-orange-500', 'border-transparent');
-            document.getElementById('ptab-settings').classList.replace('border-orange-500', 'border-transparent');
-            if(tab === 'code') { document.getElementById('project-code-panel').classList.remove('hidden'); document.getElementById('ptab-code').classList.replace('border-transparent', 'border-orange-500'); }
-            else if (tab === 'settings') { document.getElementById('project-settings-panel').classList.remove('hidden'); document.getElementById('ptab-settings').classList.replace('border-transparent', 'border-orange-500'); document.getElementById('setting-project-name').value = projects.find(x=>x.id===activeProjectId).name; }
+            document.getElementById('ptab-code').classList.replace('border-orange-500','border-transparent'); document.getElementById('ptab-settings').classList.replace('border-orange-500','border-transparent');
+            if(t==='code'){document.getElementById('project-code-panel').classList.remove('hidden');document.getElementById('ptab-code').classList.replace('border-transparent','border-orange-500');}
+            if(t==='settings'){document.getElementById('project-settings-panel').classList.remove('hidden');document.getElementById('ptab-settings').classList.replace('border-transparent','border-orange-500');document.getElementById('setting-project-name').value=projects.find(x=>x.id===activeProjectId).name;}
         }
-        function saveProjectName() { const p = projects.find(x => x.id === activeProjectId); if(p) { p.name = document.getElementById('setting-project-name').value; saveData(); document.getElementById('detail-project-name').innerText = p.name; alert('Saved'); } }
-        function deleteProject() { if(confirm("Delete project?")) { projects = projects.filter(p => p.id !== activeProjectId); saveData(); switchTab('projects'); } }
-
-        // --- FILES ---
-        function renderFiles(p) {
+        function saveProjectName() { const p = projects.find(x=>x.id===activeProjectId); p.name=document.getElementById('setting-project-name').value; syncUserData(); document.getElementById('detail-project-name').innerText=p.name; alert('Saved'); }
+        function deleteProject() { projects = projects.filter(x=>x.id!==activeProjectId); syncUserData(); switchTab('projects'); }
+        function renderFiles(){
             const list = document.getElementById('file-list-container'); list.innerHTML = '';
-            p.files.sort((a,b)=>a.name.localeCompare(b.name)).forEach((f,idx) => {
-                const item = document.createElement('div');
-                item.className = "flex items-center justify-between p-4 hover:bg-gray-50 transition-colors cursor-pointer group";
-                item.onclick = () => openFileViewer(idx);
-                let icon = f.name.endsWith('.md')?"file-text":"file-code";
-                let display = f.name.includes('/') ? `<span class="text-xs text-gray-400 mr-1">${f.name.split('/')[0]}/</span><span class="text-sm font-medium text-gray-700 font-mono">${f.name.split('/').slice(1).join('/')}</span>` : `<span class="text-sm font-medium text-gray-700 font-mono">${f.name}</span>`;
-                item.innerHTML = `<div class="flex items-center gap-3"><i data-lucide="${icon}" class="w-4 h-4 text-gray-400 group-hover:text-blue-500"></i>${display}</div><div class="flex items-center gap-4"><span class="text-xs text-gray-400">Updated ${f.date}</span><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></div>`;
-                list.appendChild(item);
+            projects.find(x=>x.id===activeProjectId).files.forEach((f,i) => {
+                list.innerHTML += `<div onclick="openFileViewer(${i})" class="flex justify-between p-4 cursor-pointer hover:bg-gray-50"><div class="flex gap-2"><i data-lucide="file-code" class="w-4 h-4"></i><span>${f.name}</span></div><span>${f.date||''}</span></div>`;
             }); lucide.createIcons();
         }
-        function openFileViewer(index) {
-            const p = projects.find(x=>x.id===activeProjectId);
-            p.files.sort((a,b)=>a.name.localeCompare(b.name));
-            const f = p.files[index]; activeFileIndex=index;
-            document.getElementById('display-filename').innerText = f.name; document.getElementById('display-filetype').innerText = f.name.split('.').pop().toUpperCase();
-            readOnlyEditor.setValue(f.content); readOnlyEditor.clearSelection(); setAceMode(f.name, readOnlyEditor);
-            if(f.name.endsWith('.md')) { document.getElementById('md-toggle-container').classList.remove('hidden'); renderMarkdown(f.content); toggleMdView('preview'); }
-            else { document.getElementById('md-toggle-container').classList.add('hidden'); toggleMdView('code'); }
+        function openFileViewer(i){ activeFileIndex=i; const f=projects.find(x=>x.id===activeProjectId).files[i]; document.getElementById('display-filename').innerText=f.name; readOnlyEditor.setValue(f.content); readOnlyEditor.clearSelection(); 
+            if(f.name.endsWith('.md')){document.getElementById('md-toggle-container').classList.remove('hidden'); document.getElementById('markdown-preview').innerHTML=marked.parse(f.content); toggleMdView('preview');} else {document.getElementById('md-toggle-container').classList.add('hidden'); toggleMdView('code');}
             document.getElementById('view-project-detail').classList.add('hidden'); document.getElementById('view-file-display').classList.remove('hidden');
         }
         function toggleMdView(m) { const e=document.getElementById('readonly-editor'),p=document.getElementById('markdown-preview'); if(m==='preview'){e.style.display='none';p.classList.remove('hidden');}else{e.style.display='block';p.classList.add('hidden');} }
-        function renderMarkdown(c) { const r=new marked.Renderer(); r.code=(c,l)=>`<pre><button class="copy-btn" onclick="copyText(this,\`${c.replace(/"/g,'&quot;')}\`)">Copy</button><code>${c}</code></pre>`; document.getElementById('markdown-preview').innerHTML=marked.parse(c,{renderer:r}); }
-        function copyText(b,t) { const ta=document.createElement('textarea');ta.value=t.replace(/&quot;/g,'"');document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.innerText="Copied!";setTimeout(()=>b.innerText="Copy",2000); }
-        function openAddFileView() { editingFileIndex=-1; document.getElementById('view-project-detail').classList.add('hidden'); document.getElementById('view-editor').classList.remove('hidden'); document.getElementById('editor-filename').value=''; document.getElementById('editor-filename').disabled=false; aceEditor.setValue("// Code here\n"); }
-        function cancelEdit() { document.getElementById('view-editor').classList.add('hidden'); document.getElementById('view-project-detail').classList.remove('hidden'); }
-        function commitFile() { 
-            const n=document.getElementById('editor-filename').value.trim(), c=aceEditor.getValue(), p=projects.find(x=>x.id===activeProjectId); 
-            if(!n)return; 
-            editingFileIndex>-1 ? (p.files[editingFileIndex].content=c,p.files[editingFileIndex].date='Just now') : p.files.push({name:n,type:'Code',content:c,date:'Just now'});
-            saveData(); renderFiles(p); switchProjectTab('code'); cancelEdit(); 
+        function openAddFileView(){ editingFileIndex=-1; document.getElementById('view-project-detail').classList.add('hidden'); document.getElementById('view-editor').classList.remove('hidden'); document.getElementById('editor-filename').value=''; aceEditor.setValue(''); }
+        function cancelEdit(){ document.getElementById('view-editor').classList.add('hidden'); document.getElementById('view-project-detail').classList.remove('hidden'); }
+        function commitFile(){ 
+            const n=document.getElementById('editor-filename').value, c=aceEditor.getValue(), p=projects.find(x=>x.id===activeProjectId);
+            if(editingFileIndex>-1) { p.files[editingFileIndex].content=c; } else { p.files.push({name:n, content:c, date:'Just now', type:'Code'}); }
+            syncUserData(); renderFiles(); cancelEdit();
         }
-        function openUploadModal(){document.getElementById('modal-upload-file').classList.remove('hidden');document.getElementById('upload-preview').classList.add('hidden');}
+        function editCurrentFile(){ editingFileIndex=activeFileIndex; const f=projects.find(x=>x.id===activeProjectId).files[activeFileIndex]; document.getElementById('view-file-display').classList.add('hidden'); document.getElementById('view-editor').classList.remove('hidden'); document.getElementById('editor-filename').value=f.name; aceEditor.setValue(f.content); }
+        function downloadCurrentFile(){ const f=projects.find(x=>x.id===activeProjectId).files[activeFileIndex]; const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([f.content])); a.download=f.name; a.click(); }
+        function openRawView(){ const f=projects.find(x=>x.id===activeProjectId).files[activeFileIndex]; const w=window.open('','_blank'); w.document.write(`<pre style="background:#0e0e0e;color:white;padding:20px">${f.content.replace(/</g,'&lt;')}</pre>`); }
+        function openUploadModal(){document.getElementById('modal-upload-file').classList.remove('hidden');}
         function closeUploadModal(){document.getElementById('modal-upload-file').classList.add('hidden');}
-        function handleFileSelect(e){const f=e.target.files[0],r=new FileReader(); r.onload=v=>{pendingUploadContent=v.target.result;document.getElementById('upload-filename').innerText=f.name;document.getElementById('upload-preview').classList.remove('hidden');document.getElementById('btn-confirm-upload').disabled=false;document.getElementById('btn-confirm-upload').classList.replace('bg-gray-300','bg-blue-600');};r.readAsText(f);}
-        function confirmUpload(){closeUploadModal();editingFileIndex=-1;document.getElementById('view-project-detail').classList.add('hidden');document.getElementById('view-editor').classList.remove('hidden');document.getElementById('editor-filename').value=document.getElementById('upload-filename').innerText;aceEditor.setValue(pendingUploadContent);aceEditor.clearSelection();setAceMode(document.getElementById('upload-filename').innerText,aceEditor);}
-        function setAceMode(f,e){ if(f.endsWith('.js'))e.session.setMode("ace/mode/javascript");else if(f.endsWith('.html'))e.session.setMode("ace/mode/html");else if(f.endsWith('.md'))e.session.setMode("ace/mode/markdown");else e.session.setMode("ace/mode/text"); }
-        function downloadCurrentFile(){const p=projects.find(x=>x.id===activeProjectId),f=p.files[activeFileIndex],b=new Blob([f.content],{type:'text/plain'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=f.name;a.click();URL.revokeObjectURL(u);}
-        function editCurrentFile(){const p=projects.find(x=>x.id===activeProjectId),f=p.files[activeFileIndex]; editingFileIndex=activeFileIndex; document.getElementById('view-file-display').classList.add('hidden');document.getElementById('view-editor').classList.remove('hidden');document.getElementById('editor-filename').value=f.name;document.getElementById('editor-filename').disabled=true;aceEditor.setValue(f.content);aceEditor.clearSelection();setAceMode(f.name,aceEditor);}
-        function openRawView(){const f=projects.find(x=>x.id===activeProjectId).files[activeFileIndex],w=window.open("","_blank");w.document.write(`<!DOCTYPE html><html><head><title>${f.name}(Raw)</title><style>body{background:#0e0e0e;color:#f8f8f2;font-family:monospace;margin:20px;white-space:pre-wrap;}</style></head><body>${f.content.replace(/&/g,"&amp;").replace(/</g,"&lt;")}</body></html>`);w.document.close();}
+        function handleFileSelect(e){const f=e.target.files[0]; const r=new FileReader(); r.onload=v=>{pendingUploadContent=v.target.result;document.getElementById('btn-confirm-upload').disabled=false;document.getElementById('upload-preview').classList.remove('hidden');document.getElementById('upload-filename').innerText=f.name;document.getElementById('btn-confirm-upload').classList.replace('bg-gray-300','bg-blue-600');}; r.readAsText(f);}
+        function confirmUpload(){closeUploadModal(); editingFileIndex=-1; document.getElementById('view-project-detail').classList.add('hidden'); document.getElementById('view-editor').classList.remove('hidden'); document.getElementById('editor-filename').value=document.getElementById('upload-filename').innerText; aceEditor.setValue(pendingUploadContent); }
     </script>
 </body>
-              </html>
+</html>
