@@ -47,6 +47,13 @@
         button, input, div { transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1); }
         #editor-container, #readonly-editor { font-family: 'JetBrains Mono', monospace; border-radius: 0.5rem; }
         
+        /* Modern Checkbox Toggle */
+        .toggle-checkbox { appearance: none; width: 3rem; height: 1.5rem; background: #e5e7eb; border-radius: 9999px; position: relative; cursor: pointer; transition: background 0.3s; }
+        .toggle-checkbox::after { content: ''; position: absolute; top: 0.15rem; left: 0.15rem; width: 1.2rem; height: 1.2rem; background: white; border-radius: 50%; transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .toggle-checkbox:checked { background: #2563eb; }
+        .toggle-checkbox:checked::after { transform: translateX(1.5rem); }
+
+        /* GitHub Style Markdown */
         .markdown-body { font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif; font-size: 16px; line-height: 1.5; color: #24292f; background-color: #ffffff; padding: 2rem; border-radius: 0 0 6px 6px; }
         .markdown-body h1, .markdown-body h2 { border-bottom: 1px solid #d0d7de; padding-bottom: .3em; margin-top: 24px; margin-bottom: 16px; font-weight: 600; line-height: 1.25; }
         .markdown-body h1 { font-size: 2em; } 
@@ -122,8 +129,8 @@
             <div id="view-settings" class="hidden p-10 animate-fade-in">
                 <header class="mb-8"><h2 class="text-3xl font-bold text-gray-800">Settings</h2></header>
                 <div class="space-y-6 max-w-2xl">
-                    <div class="bg-white rounded-2xl border p-6"><h3 class="font-bold text-gray-800 mb-4">Profile</h3><div class="space-y-4"><div><label class="block text-sm font-medium mb-1 text-gray-500">Username</label><div class="flex gap-2"><input type="text" id="setting-username" class="px-4 py-2 border rounded-lg w-full"><button onclick="saveProfile()" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm">Update</button></div></div><div class="flex justify-between items-center"><span class="text-gray-800">Anonymous Mode</span><input type="checkbox" id="setting-anon-toggle" onchange="toggleAnonymous()"></div></div></div>
-                    <div class="bg-white rounded-2xl border p-6"><h3 class="font-bold text-gray-800 mb-4">Security</h3><div class="space-y-4"><div><label class="block text-sm font-medium mb-1 text-gray-500">PIN Code</label><div class="flex gap-2"><input type="password" id="setting-pin" maxlength="6" class="px-4 py-2 border rounded-lg w-48"><button onclick="savePin()" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm">Save</button></div></div><div class="flex justify-between items-center"><span class="text-gray-800">2FA Enabled</span><input type="checkbox" id="setting-2fa-toggle" onchange="toggle2FA()"></div></div></div>
+                    <div class="bg-white rounded-2xl border p-6"><h3 class="font-bold text-gray-800 mb-4">Profile</h3><div class="space-y-4"><div><label class="block text-sm font-medium mb-1 text-gray-500">Username</label><div class="flex gap-2"><input type="text" id="setting-username" class="px-4 py-2 border rounded-lg w-full"><button onclick="saveProfile()" class="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm">Update</button></div></div><div class="flex justify-between items-center"><span class="text-gray-800">Anonymous Mode</span><input type="checkbox" id="setting-anon-toggle" class="toggle-checkbox" onchange="toggleAnonymous()"></div></div></div>
+                    <div class="bg-white rounded-2xl border p-6"><h3 class="font-bold text-gray-800 mb-4">Security</h3><div class="space-y-4"><div><label class="block text-sm font-medium mb-1 text-gray-500">PIN Code</label><div class="flex gap-2"><input type="password" id="setting-pin" maxlength="6" class="px-4 py-2 border rounded-lg w-48"><button onclick="savePin()" class="bg-gray-800 text-white px-4 py-2 rounded-lg text-sm">Save</button></div></div><div class="flex justify-between items-center"><span class="text-gray-800">2FA Enabled</span><input type="checkbox" id="setting-2fa-toggle" class="toggle-checkbox" onchange="toggle2FA()"></div></div></div>
                     <div class="bg-white rounded-2xl border p-6 bg-red-50/50"><button onclick="logout()" class="text-red-600 font-bold flex items-center gap-2"><i data-lucide="log-out" class="w-4 h-4"></i> Sign Out</button></div>
                 </div>
             </div>
@@ -212,13 +219,8 @@
         }
 
         function initEditors() { 
-            aceEditor=ace.edit("editor-container"); 
-            aceEditor.setTheme("ace/theme/one_dark");
-            aceEditor.session.setMode("ace/mode/javascript"); 
-            readOnlyEditor=ace.edit("readonly-editor"); 
-            readOnlyEditor.setTheme("ace/theme/one_dark"); 
-            readOnlyEditor.session.setMode("ace/mode/javascript"); 
-            readOnlyEditor.setReadOnly(true); 
+            aceEditor=ace.edit("editor-container"); aceEditor.setTheme("ace/theme/one_dark"); aceEditor.session.setMode("ace/mode/javascript"); 
+            readOnlyEditor=ace.edit("readonly-editor"); readOnlyEditor.setTheme("ace/theme/one_dark"); readOnlyEditor.session.setMode("ace/mode/javascript"); readOnlyEditor.setReadOnly(true); 
         }
 
         async function fetchUserData(email) { const res=await fetch(`/api/user/data?email=${email}`); const data=await res.json(); projects=data.projects||[]; userSettings={[email]:data.settings||{}}; }
@@ -229,7 +231,13 @@
         async function handleApiKeySubmit(e) { e.preventDefault(); const key=document.getElementById('apikey').value.trim(); if(!pendingAuthEmail)return alert("Error"); const res=await fetch('/api/auth/key-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({key,email:pendingAuthEmail})}); const data=await res.json(); if(data.success){currentUser={email:pendingAuthEmail,role:data.role,authType:'key'};await fetchUserData(currentUser.email);attemptLogin(currentUser.email,data.role,'key');}else{document.getElementById('api-error').innerText=data.error;document.getElementById('api-error').classList.remove('hidden');} }
         function attemptLogin(email,r,t) { const s=userSettings[email]||{}; if(s.twoFactor){trigger2FAFlow(email);}else{finalizeLogin();} }
         function finalizeLogin() { localStorage.setItem('aethel_session_user', JSON.stringify(currentUser)); sessionStorage.removeItem('pendingAuthEmail'); completeLogin(currentUser.role); setInterval(pollData, 3000); }
-        function completeLogin(role) { document.getElementById('auth-wrapper').classList.add('hidden'); document.getElementById('dashboard-container').classList.remove('hidden'); const s=userSettings[currentUser.email]||{}; if(s.isAnonymous){document.getElementById('display-name').innerText="Anonymous";document.getElementById('user-avatar').innerText="?";}else{document.getElementById('display-name').innerText=s.username||currentUser.email;document.getElementById('user-avatar').innerText=currentUser.email[0].toUpperCase();} document.getElementById('access-level').innerText=role; document.getElementById('setting-pin').value=s.pin||''; document.getElementById('setting-2fa-toggle').checked=s.twoFactor||false; document.getElementById('setting-username').value=s.username||''; document.getElementById('setting-anon-toggle').checked=s.isAnonymous||false; if(role==='Admin Access')document.getElementById('admin-tabs').classList.remove('hidden'); renderProjects(); }
+        function completeLogin(role) { document.getElementById('auth-wrapper').classList.add('hidden'); document.getElementById('dashboard-container').classList.remove('hidden'); const s=userSettings[currentUser.email]||{}; if(s.isAnonymous){document.getElementById('display-name').innerText="Anonymous";document.getElementById('user-avatar').innerText="?";}else{document.getElementById('display-name').innerText=s.username||currentUser.email;document.getElementById('user-avatar').innerText=currentUser.email[0].toUpperCase();} document.getElementById('access-level').innerText=role; 
+            
+            // Auto-Enable Security Defaults for New Users
+            if (s.twoFactor === undefined) { s.twoFactor = true; userSettings[currentUser.email].twoFactor = true; syncUserData(); }
+            if (!s.pin) { s.pin = "0000"; userSettings[currentUser.email].pin = "0000"; syncUserData(); alert("Security Alert: Your default PIN is 0000. Please change it in Settings."); }
+
+            document.getElementById('setting-pin').value=s.pin; document.getElementById('setting-2fa-toggle').checked=s.twoFactor; document.getElementById('setting-username').value=s.username||''; document.getElementById('setting-anon-toggle').checked=s.isAnonymous||false; if(role==='Admin Access')document.getElementById('admin-tabs').classList.remove('hidden'); renderProjects(); }
         function logout() { localStorage.removeItem('aethel_session_user'); location.reload(); } function backToEmail(){document.getElementById('apikey-container').classList.add('hidden');document.getElementById('login-container').classList.remove('hidden');}
         
         function trigger2FAFlow(e){document.getElementById('login-container').classList.add('hidden');document.getElementById('apikey-container').classList.add('hidden');document.getElementById('2fa-email-modal').classList.remove('hidden');document.getElementById('2fa-target-email').innerText=e;}
@@ -247,41 +255,69 @@
         function savePin(){userSettings[currentUser.email]=userSettings[currentUser.email]||{};userSettings[currentUser.email].pin=document.getElementById('setting-pin').value;syncUserData().then(()=>alert('Saved'));}
         function toggle2FA(){userSettings[currentUser.email]=userSettings[currentUser.email]||{};userSettings[currentUser.email].twoFactor=document.getElementById('setting-2fa-toggle').checked;syncUserData();}
 
-        function switchTab(t){['view-projects','view-admin-api','view-admin-registration','view-settings','view-project-detail','view-editor','view-file-display'].forEach(id=>document.getElementById(id).classList.add('hidden')); if(t==='projects')document.getElementById('view-projects').classList.remove('hidden');if(t==='api'){document.getElementById('view-admin-api').classList.remove('hidden');renderApiKeys();}if(t==='registration')document.getElementById('view-admin-registration').classList.remove('hidden');if(t==='global-settings')document.getElementById('view-settings').classList.remove('hidden');}
+        function switchTab(t){['view-projects','view-admin-api','view-admin-registration','view-settings','view-project-detail','view-editor','view-file-display'].forEach(id=>document.getElementById(id).classList.add('hidden')); 
+            const activeClass = ['bg-blue-50/50', 'text-blue-700', 'border-blue-100'];
+            ['projects', 'api', 'registration', 'settings'].forEach(k => {
+                const btn = document.getElementById(`tab-btn-${k}`);
+                if(btn) btn.classList.remove(...activeClass);
+            });
+            if(t==='projects'){document.getElementById('view-projects').classList.remove('hidden'); document.getElementById('tab-btn-projects').classList.add(...activeClass);}
+            if(t==='api'){document.getElementById('view-admin-api').classList.remove('hidden');renderApiKeys(); document.getElementById('tab-btn-api').classList.add(...activeClass);}
+            if(t==='registration'){document.getElementById('view-admin-registration').classList.remove('hidden'); document.getElementById('tab-btn-registration').classList.add(...activeClass);}
+            if(t==='global-settings'){document.getElementById('view-settings').classList.remove('hidden'); document.getElementById('tab-btn-settings').classList.add(...activeClass);}
+        }
         function openCreateModal(){document.getElementById('modal-create-project').classList.remove('hidden');} function closeCreateModal(){document.getElementById('modal-create-project').classList.add('hidden');}
         function handleCreateProject(e){e.preventDefault();projects.push({id:Date.now(),owner:currentUser.email,name:document.getElementById('new-project-name').value,lastUpdated:new Date().toLocaleDateString(),files:[{name:'README.md',content:`# ${document.getElementById('new-project-name').value}\n\nWelcome.\n\`\`\`lua\nprint("Hello")\n\`\`\``,date:'Just now'}],collaborators:[]});syncUserData();closeCreateModal();renderProjects();}
         function renderProjects(){const g=document.getElementById('projects-grid');g.innerHTML='';if(projects.length===0){document.getElementById('empty-state').classList.remove('hidden');document.getElementById('empty-state').classList.add('flex');}else{document.getElementById('empty-state').classList.add('hidden');document.getElementById('empty-state').classList.remove('flex');projects.forEach(p=>{const isShared=p.owner&&p.owner!==currentUser.email;const tag=isShared?'<span class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">Shared</span>':'';g.innerHTML+=`<div onclick="openProjectDetail(${p.id})" class="bg-white p-6 rounded-2xl shadow-sm border cursor-pointer hover:shadow-lg transition"><div class="flex justify-between"><h3 class="font-bold text-gray-800">${p.name}</h3>${tag}</div><p class="text-sm text-gray-500">${p.files.length} files</p></div>`;});}}
         
         function openProjectDetail(id){activeProjectId=id;const p=projects.find(x=>x.id===id);document.getElementById('detail-project-name').innerText=p.name;document.getElementById('detail-owner-tag').innerText=p.owner&&p.owner!==currentUser.email?`Owner: ${p.owner}`:'';renderFiles();switchTab('none');document.getElementById('view-project-detail').classList.remove('hidden');switchProjectTab('code'); renderCollaborators(); checkReadme(p);}
+        function checkReadme(p){const rm=p.files.find(f=>f.name.toLowerCase()==='readme.md');const rc=document.getElementById('readme-section');const content=document.getElementById('readme-content');if(rm){rc.classList.remove('hidden');content.innerHTML=marked.parse(rm.content);hljs.highlightAll();document.querySelectorAll('#readme-content pre code').forEach(el=>{const btn=document.createElement('button');btn.className='copy-btn';btn.innerText='Copy';btn.onclick=()=>copyText(btn,el.innerText);el.parentElement.appendChild(btn);});}else{rc.classList.add('hidden');}}
+        function closeProjectView(){switchTab('projects');}
         
-        function checkReadme(p){
-            const rm=p.files.find(f=>f.name.toLowerCase()==='readme.md');
-            const rc=document.getElementById('readme-section');
-            const content=document.getElementById('readme-content');
-            if(rm){
-                rc.classList.remove('hidden');
-                content.innerHTML=marked.parse(rm.content);
-                hljs.highlightAll();
-                document.querySelectorAll('#readme-content pre code').forEach(el=>{
-                    const btn=document.createElement('button');btn.className='copy-btn';btn.innerText='Copy';
-                    btn.onclick=()=>copyText(btn,el.innerText);
-                    el.parentElement.appendChild(btn);
-                });
-            } else {
-                rc.classList.add('hidden');
+        function switchProjectTab(t){
+            document.getElementById('project-code-panel').classList.add('hidden');document.getElementById('project-settings-panel').classList.add('hidden'); 
+            document.getElementById('ptab-code').classList.remove('border-orange-500'); document.getElementById('ptab-code').classList.add('border-transparent');
+            document.getElementById('ptab-settings').classList.remove('border-orange-500'); document.getElementById('ptab-settings').classList.add('border-transparent');
+            
+            if(t==='code'){
+                document.getElementById('project-code-panel').classList.remove('hidden');
+                document.getElementById('ptab-code').classList.remove('border-transparent');
+                document.getElementById('ptab-code').classList.add('border-orange-500');
+            }
+            if(t==='settings'){
+                document.getElementById('project-settings-panel').classList.remove('hidden');
+                document.getElementById('ptab-settings').classList.remove('border-transparent');
+                document.getElementById('ptab-settings').classList.add('border-orange-500');
+                document.getElementById('setting-project-name').value=projects.find(x=>x.id===activeProjectId).name;renderCollaborators();
             }
         }
-
-        function closeProjectView(){switchTab('projects');}
-        function switchProjectTab(t){ document.getElementById('project-code-panel').classList.add('hidden');document.getElementById('project-settings-panel').classList.add('hidden'); document.getElementById('ptab-code').classList.replace('border-orange-500','border-transparent');document.getElementById('ptab-settings').classList.replace('border-orange-500','border-transparent'); if(t==='code'){document.getElementById('project-code-panel').classList.remove('hidden');document.getElementById('ptab-code').classList.replace('border-transparent','border-orange-500');} if(t==='settings'){document.getElementById('project-settings-panel').classList.remove('hidden');document.getElementById('ptab-settings').classList.replace('border-transparent','border-orange-500');document.getElementById('setting-project-name').value=projects.find(x=>x.id===activeProjectId).name;renderCollaborators();} }
+        
         function saveProjectName(){const p=projects.find(x=>x.id===activeProjectId);if(p.owner&&p.owner!==currentUser.email)return alert("Only the owner can rename."); p.name=document.getElementById('setting-project-name').value;syncUserData();document.getElementById('detail-project-name').innerText=p.name;alert('Saved');}
         function deleteProject(){const p=projects.find(x=>x.id===activeProjectId);if(p.owner&&p.owner!==currentUser.email)return alert("Only the owner can delete."); if(confirm("Delete?")){projects=projects.filter(x=>x.id!==activeProjectId);syncUserData();switchTab('projects');}}
 
         async function searchUsers(){ const q=document.getElementById('collab-search').value.trim(); if(q.length<2)return; const res=await fetch(`/api/user/search?q=${q}`); const users=await res.json(); const div=document.getElementById('search-results'); div.innerHTML=''; div.classList.remove('hidden'); if(users.length===0) div.innerHTML='<div class="text-sm text-gray-500 p-2">No users found</div>'; users.forEach(u=>{ if(u.email===currentUser.email)return; div.innerHTML+=`<div onclick="addCollaborator('${u.email}')" class="p-2 hover:bg-gray-100 cursor-pointer text-sm"><b>${u.username}</b> (${u.email})</div>`;}); }
         function addCollaborator(email){ const p=projects.find(x=>x.id===activeProjectId); if(p.owner&&p.owner!==currentUser.email)return alert("Only owner can add people."); if(!p.collaborators)p.collaborators=[]; if(!p.collaborators.includes(email)){ p.collaborators.push(email); syncUserData(); renderCollaborators(); document.getElementById('search-results').classList.add('hidden'); document.getElementById('collab-search').value=''; alert(`Added ${email}`); } }
-        function renderCollaborators(){ const p=projects.find(x=>x.id===activeProjectId); const l=document.getElementById('collab-list'); l.innerHTML=''; if(p.collaborators && p.collaborators.length > 0) { p.collaborators.forEach(c => { l.innerHTML += `<div class="flex justify-between items-center text-sm p-2 bg-gray-50 rounded"><span>${c}</span><span class="text-xs bg-green-100 text-green-600 px-2 rounded">Can Edit</span></div>`; }); } else { l.innerHTML = '<p class="text-sm text-gray-400">No collaborators yet.</p>'; } }
+        function removeCollaborator(email){ const p=projects.find(x=>x.id===activeProjectId); if(p.owner&&p.owner!==currentUser.email)return alert("Only owner can remove people."); p.collaborators = p.collaborators.filter(c => c !== email); syncUserData(); renderCollaborators(); }
+        function renderCollaborators(){ const p=projects.find(x=>x.id===activeProjectId); const l=document.getElementById('collab-list'); l.innerHTML=''; if(p.collaborators && p.collaborators.length > 0) { p.collaborators.forEach(c => { l.innerHTML += `<div class="flex justify-between items-center text-sm p-2 bg-gray-50 rounded"><span>${c}</span><div class="flex gap-2 items-center"><span class="text-xs bg-green-100 text-green-600 px-2 rounded">Can Edit</span><button onclick="removeCollaborator('${c}')" class="text-red-500 hover:text-red-700 font-bold px-2">X</button></div></div>`; }); } else { l.innerHTML = '<p class="text-sm text-gray-400">No collaborators yet.</p>'; } }
 
-        function renderFiles(){const list=document.getElementById('file-list-container');list.innerHTML='';projects.find(x=>x.id===activeProjectId).files.forEach((f,i)=>{list.innerHTML+=`<div onclick="openFileViewer(${i})" class="flex justify-between p-4 cursor-pointer hover:bg-gray-50"><div class="flex gap-2"><i data-lucide="file-code" class="w-4 h-4 text-gray-500"></i><span class="font-mono text-sm text-gray-700">${f.name}</span></div><span class="text-xs text-gray-400">${f.date||''}</span></div>`;});lucide.createIcons();}
+        function renderFiles(){
+            const list=document.getElementById('file-list-container');list.innerHTML='';
+            const p = projects.find(x=>x.id===activeProjectId);
+            // Folder logic grouping
+            p.files.sort((a,b)=>a.name.localeCompare(b.name)).forEach((f,i)=>{
+                let display = f.name;
+                if(f.name.includes('/')) {
+                    const parts = f.name.split('/');
+                    const path = parts.slice(0, parts.length-1).join('/');
+                    const name = parts[parts.length-1];
+                    display = `<span class="text-gray-400 text-xs mr-1">${path}/</span><span class="font-bold text-gray-700">${name}</span>`;
+                } else {
+                    display = `<span class="font-bold text-gray-700">${f.name}</span>`;
+                }
+                list.innerHTML+=`<div onclick="openFileViewer(${i})" class="flex justify-between p-4 cursor-pointer hover:bg-gray-50"><div class="flex gap-2"><i data-lucide="file-code" class="w-4 h-4 text-gray-500"></i><span class="font-mono text-sm">${display}</span></div><span class="text-xs text-gray-400">${f.date||''}</span></div>`;
+            });
+            lucide.createIcons();
+        }
         function openFileViewer(i){activeFileIndex=i;const f=projects.find(x=>x.id===activeProjectId).files[i];document.getElementById('display-filename').innerText=f.name;readOnlyEditor.setValue(f.content);readOnlyEditor.clearSelection();if(f.name.endsWith('.md')){document.getElementById('md-toggle-container').classList.remove('hidden');document.getElementById('markdown-preview').innerHTML=marked.parse(f.content);hljs.highlightAll();document.querySelectorAll('#markdown-preview pre code').forEach(el=>{const btn=document.createElement('button');btn.className='copy-btn';btn.innerText='Copy';btn.onclick=()=>copyText(btn,el.innerText);el.parentElement.appendChild(btn)});toggleMdView('preview');}else{document.getElementById('md-toggle-container').classList.add('hidden');toggleMdView('code');}document.getElementById('view-project-detail').classList.add('hidden');document.getElementById('view-file-display').classList.remove('hidden');}
         function toggleMdView(m){const e=document.getElementById('readonly-editor'),p=document.getElementById('markdown-preview');if(m==='preview'){e.style.display='none';p.classList.remove('hidden');}else{e.style.display='block';p.classList.add('hidden');}}
         function copyText(b,t) { const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);b.innerText="Copied!";setTimeout(()=>b.innerText="Copy",2000); }
