@@ -213,19 +213,8 @@ app.get('/raw/:project/:file', (req, res) => {
                 <title>${fName} (Raw)</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <style>
-                    body { background-color: #ffffff; color: #000000; font-family: monospace; margin: 0; padding: 20px; white-space: pre-wrap; word-wrap: break-word; }
-                    ::selection { background: transparent; }
+                    body { background-color: #0e0e0e; color: #f8f8f2; font-family: monospace; margin: 0; padding: 20px; white-space: pre-wrap; word-wrap: break-word; }
                 </style>
-                <script>
-                    document.addEventListener('contextmenu', event => event.preventDefault());
-                    document.onkeydown = function(e) {
-                        if(e.keyCode == 123) return false;
-                        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
-                        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
-                        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
-                        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
-                    }
-                </script>
             </head>
             <body>${foundFile.content.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</body>
             </html>
