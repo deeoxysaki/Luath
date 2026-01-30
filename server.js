@@ -35,10 +35,14 @@ function saveDB() {
     }
 }
 
+function generateId() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
 app.post('/api/admin/generate-key', (req, res) => {
     const { duration } = req.body;
     const prefix = "sk_live_";
-    const key = prefix + Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
+    const key = prefix + generateId();
     
     const now = new Date();
     const expiresAt = new Date(now.getTime() + (duration * 24 * 60 * 60 * 1000));
@@ -135,7 +139,15 @@ app.get('/api/user/data', (req, res) => {
     if (!email) return res.json({ projects: [], settings: {} });
 
     let myProjects = db.projects[email] || [];
-    myProjects.forEach(p => { if(!p.owner) p.owner = email; });
+    // Ensure data integrity on load
+    myProjects.forEach(p => { 
+        if(!p.owner) p.owner = email; 
+        if(!p.publicId) p.publicId = generateId();
+        p.files.forEach(f => {
+            if(!f.publicId) f.publicId = generateId();
+            if(!f.history) f.history = [];
+        });
+    });
 
     let sharedProjects = [];
     Object.keys(db.projects).forEach(ownerEmail => {
@@ -144,7 +156,8 @@ app.get('/api/user/data', (req, res) => {
         if (ownerProjs) {
             const shared = ownerProjs.filter(p => p.collaborators && p.collaborators.includes(email));
             shared.forEach(p => {
-                if(!p.owner) p.owner = ownerEmail; 
+                if(!p.owner) p.owner = ownerEmail;
+                if(!p.publicId) p.publicId = generateId(); 
             });
             sharedProjects = sharedProjects.concat(shared);
         }
@@ -163,6 +176,15 @@ app.post('/api/user/data', (req, res) => {
     if (settings) db.settings[email] = settings;
 
     if (projects) {
+        // Ensure IDs exist before saving
+        projects.forEach(p => {
+            if (!p.publicId) p.publicId = generateId();
+            p.files.forEach(f => {
+                if (!f.publicId) f.publicId = generateId();
+                if (!f.history) f.history = [];
+            });
+        });
+
         const owned = projects.filter(p => !p.owner || p.owner === email);
         owned.forEach(p => p.owner = email);
         db.projects[email] = owned;
@@ -183,18 +205,20 @@ app.post('/api/user/data', (req, res) => {
     res.json({ success: true });
 });
 
-app.get('/raw/:project/:file', (req, res) => {
-    const pName = decodeURIComponent(req.params.project);
-    const fName = decodeURIComponent(req.params.file);
+// RAW ROUTE: Uses Random IDs
+app.get('/raw/:pid/:fid', (req, res) => {
+    const pid = req.params.pid;
+    const fid = req.params.fid;
     
     let foundFile = null;
     
     const allEmails = Object.keys(db.projects);
     for (const email of allEmails) {
         const projs = db.projects[email];
-        const match = projs.find(p => p.name === pName);
+        // Search by publicId
+        const match = projs.find(p => p.publicId === pid);
         if (match) {
-            const file = match.files.find(f => f.name === fName);
+            const file = match.files.find(f => f.publicId === fid);
             if (file) {
                 foundFile = file;
                 break;
